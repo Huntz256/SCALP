@@ -4,11 +4,12 @@
 */
 
 
-//#define guard prevents multiple inclusion
-#ifndef SCALP_PARSER_H_
-#define SCALP_PARSER_H_
+//header guard prevents multiple inclusion
+#ifndef SCALP_PARSER_H
+#define SCALP_PARSER_H
 
 //Let TokenType::error = 0, TokenType::plus = 1, and so on
+//Also limits TokenType to these tokens
 enum TokenType {
 	error,
 	plus,
@@ -43,8 +44,7 @@ struct Token {
 class Parser {
 	Token token;
 public:
-	void parse(const char* text);
+	void parse(const char *text);
 };
-
 
 #endif //SCALP_PARSER_H_
