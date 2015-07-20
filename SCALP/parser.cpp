@@ -4,6 +4,7 @@
 */
 
 #include "parser.h"
+#include "ast.h"
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
