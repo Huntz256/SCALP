@@ -52,7 +52,7 @@ class Parser {
 	Token token;
 
 	// This keeps track of where we are in the expression
-	// size_t is the type used to represent sizes (as its name implies), but can also be used as an int
+	// size_t is the type commonly used to represent sizes (as its name implies) and counts (like indexes), but can also be used as an unsigned int
 	size_t index;
 
 	// Extracts the next token in the expression
@@ -69,7 +69,7 @@ class Parser {
 	void term1();
 	void factor();
 
-	// Used to match parenthesis
+	// Used to match parentheses
 	void match(char expected);
 
 	// Skips all whitespaces between two tokens
