@@ -10,10 +10,10 @@
 
 // Parse expression passed in as t_text
 void Parser::parse(const char* t_text) {
-	text = t_text;
-	index = 0;
-	getNextToken();
-	expression();
+	this->text = t_text;
+	this->index = 0;
+	this->getNextToken();
+	this->expression();
 }
 
 // Skips all whitespaces between two tokens
@@ -30,13 +30,13 @@ void Parser::getNextToken() {
 	token.value = 0;
 	token.symbol = 0;
 
-	// If we have reached the end of text, than this token is endOfText
+	// If we have reached the end of text, then this token is endOfText
 	if (text[index] == 0) {
 		token.type = endOfText;
 		return;
 	}
 
-	// If the current character is a digit, than this token is a number
+	// If the current character is a digit, then this token is a number
 	if (isdigit(text[index])) {
 		token.type = number;
 		token.value = getNumber();
@@ -46,7 +46,7 @@ void Parser::getNextToken() {
 	// Let this token be an error for now
 	token.type = error;
 
-	// If the current character is an operator or paretheses, than this token is an operator or paretheses
+	// If the current character is an operator or paretheses, then this token is an operator or paretheses
 	switch (text[index]) {
 	case '+': token.type = plus; break;
 	case '-': token.type = minus; break;
@@ -158,7 +158,7 @@ void Parser::factor() {
 		getNextToken();
 		break;
 	default:
-		throw "Unexcepted token! Oh no!";
+		throw "Unexpected token! Oh no!";
 	}
 }
 
