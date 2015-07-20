@@ -100,7 +100,7 @@ double Parser::getNumber() {
 // +, -, *, /, (, ), and numbers are called terminal symbols.
 // All non-terminal symbols can be broken down into terminal symbols.
 // Example: For the expression "1+2", EXP -> TERM EXP1 -> FACTOR TERM1 EXP1 -> 1 TERM1 EXP1 -> 1 (nothing) EXP1 
-//   -> 1 + TERM EXP1 -> 1 + FACTOR TERM1 EXP1 -> 1 + 1 (nothing) (nothing) -> 1 + 1
+//   -> 1 + TERM EXP1 -> 1 + FACTOR TERM1 EXP1 -> 1 + 2 (nothing) (nothing) -> 1 + 2
 
 // Break an EXP down to TERM EXP1
 void Parser::expression() {

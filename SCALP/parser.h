@@ -3,16 +3,9 @@
  * This class may be modified later for use in building an Abstract Syntax Tree.
 */
 
-<<<<<<< HEAD
-
-//header guard prevents multiple inclusion
-#ifndef SCALP_PARSER_H
-#define SCALP_PARSER_H
-=======
 //#define guard prevents multiple inclusion
 #ifndef SCALP_PARSER_H_
 #define SCALP_PARSER_H_
->>>>>>> test/hunter
 
 //Let TokenType::error = 0, TokenType::plus = 1, and so on
 //Also limits TokenType to these tokens
@@ -83,12 +76,8 @@ class Parser {
 	void skipWhitespaces();
 	
 public:
-<<<<<<< HEAD
-	void parse(const char *text);
-=======
 	// Parse expression passed in as t_text
 	void parse(const char* t_text);
->>>>>>> test/hunter
 };
 
 #endif //SCALP_PARSER_H_
