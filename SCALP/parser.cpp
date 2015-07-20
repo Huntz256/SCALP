@@ -5,8 +5,9 @@
 
 #include "parser.h"
 #include <ctype.h>
-#include <string.h>
 #include <stdlib.h>
+#include <sstream>
+
 
 // Parse expression passed in as t_text
 void Parser::parse(const char* t_text) {
@@ -63,7 +64,9 @@ void Parser::getNextToken() {
 	}
 	// If this token's type is still error, we have a problem
 	else {
-		throw "Unexpected token!";
+		std::stringstream sstr;
+		sstr << "Invalid token '" << text[index] << "' spotted at position: " << index << ".";
+		throw ParserException(sstr.str(), index);
 	}
 }
 
@@ -84,7 +87,7 @@ double Parser::getNumber() {
 	}
 
 	if (index - i == 0) {
-		throw "Number expected, but not found!";
+		throw ParserException("Number expected, but not found!", index);
 	}
 
 	char buffer[32] = { 0 };
@@ -158,7 +161,9 @@ void Parser::factor() {
 		getNextToken();
 		break;
 	default:
-		throw "Unexpected token! Oh no!";
+		std::stringstream sstr;
+		sstr << "Unexpected token '" << token.symbol << "' at position: " << index - 1 << "."; //not sure why index is 1 ahead here...
+		throw ParserException(sstr.str(), index - 1);
 	}
 }
 
@@ -168,6 +173,11 @@ void Parser::match(char expected) {
 		getNextToken();
 	}
 	else {
-		throw "Expected another token at this position!";
+		std::stringstream sstr;
+		sstr << "Expected token '" << expected << "' at position: " << index << ".";
+		throw ParserException(sstr.str(), index);
 	}
 }
+
+//Implementation of ParserException method used to throw exceptions with custom messages
+ParserException::ParserException(const std::string& message, int pos) : std::exception(message.c_str()), position(pos){};
