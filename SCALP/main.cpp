@@ -2,15 +2,15 @@
 #include "parser.h"
 
 // Tests if the expression text is a valid expression
-// Outputs "VALID" to console if valid, outputs "INVALID" to console if invalid
+// Outputs "VALID" to console if valid, outputs "INVALID: (exception message)" to console if invalid
 void test(const char* text) {
 	Parser parser;
 	try {
 		parser.parse(text);
 		std::cout << "\"" << text << "\"" << "  VALID" << "\n\n";
 	}
-	catch (char* exception) {
-		std::cout << "\"" << text << "\"" << "  INVALID" << "\n\n";
+	catch (const ParserException& e) {
+		std::cout << "\"" << text << "\"" << "  INVALID: " << e.what() << "\n\n";
 	}
 }
 
@@ -28,16 +28,16 @@ int main() {
 	test("-300 + (-3.0554) * 141292");
 	test("256256256256");
 
-
 	//Test whether the following are valid (they should not be)
 	test("1 ++ 3");
 	test(" *1 / 42.5");
+	test("/52");
 	test("42 ** 8");
 	test("((1.26 + 8.99");
 	test("MINH hahahaha");
 	test("A: heheh A: go left");
 
 	//Pause the program
-	int x; std::cin >> x;
+	system("PAUSE");
 	return 0;
 }

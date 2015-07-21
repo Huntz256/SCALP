@@ -4,8 +4,11 @@
 */
 
 //#define guard prevents multiple inclusion
-#ifndef SCALP_PARSER_H_
-#define SCALP_PARSER_H_
+#ifndef SCALP_PARSER_H
+#define SCALP_PARSER_H
+
+#include <exception>
+#include <string>
 
 //Let TokenType::error = 0, TokenType::plus = 1, and so on
 //Also limits TokenType to these tokens
@@ -80,4 +83,12 @@ public:
 	void parse(const char* t_text);
 };
 
-#endif //SCALP_PARSER_H_
+//Custome ParserException class derived from the base exception class defined in the standard library
+class ParserException : public std::exception{
+	int position; //The position (AKA the index) at which the exception occurs
+
+public:
+	ParserException(const std::string& message, int pos); //Exception method that takes in a custom message, as well as the position of the exception
+};
+
+#endif //SCALP_PARSER_H
