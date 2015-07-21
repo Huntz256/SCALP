@@ -1,6 +1,8 @@
 /* 
- * Implements the Parser class in parser.h
- * The class may be modified later for use in building an Abstract Syntax Tree.
+ * Implements the Parser class in parser.h: 
+ * Given an expression, returns an abstract syntax tree representing that expression
+ * Throws an ParserException if the expression given is invalid.
+ * See parser.h for sample useage.
 */
 
 #include "parser.h"
@@ -9,13 +11,12 @@
 #include <stdlib.h>
 #include <sstream>
 
-
-// Parse expression passed in as t_text
-void Parser::parse(const char* t_text) {
+// Parse expression passed in as t_text and return an AST; this is the main function of the class
+ASTNode* Parser::parse(const char* t_text) {
 	this->text = t_text;
 	this->index = 0;
 	this->getNextToken();
-	this->expression();
+	return this->expression();
 }
 
 // Skips all whitespaces between two tokens
@@ -72,6 +73,7 @@ void Parser::getNextToken() {
 }
 
 // Returns the number at the current location in the expression
+// If a number wasn't found, throw an exception
 double Parser::getNumber() {
 	skipWhitespaces();
 
@@ -107,60 +109,82 @@ double Parser::getNumber() {
 //   -> 1 + TERM EXP1 -> 1 + FACTOR TERM1 EXP1 -> 1 + 2 (nothing) (nothing) -> 1 + 2
 
 // Break an EXP down to TERM EXP1
-void Parser::expression() {
-	term();
-	expression1();
+ASTNode* Parser::expression() {
+	ASTNode* termNode = term();
+	ASTNode* expression1Node = expression1();
+
+	return createNode(operatorPlus, termNode, expression1Node);
 }
 
-// Break an EXP1 down into + TERM EXP1 or - TERM EXP1 or nothing
-void Parser::expression1() {
+// Break an EXP1 down into + TERM EXP1 or - TERM EXP1 or a number 0
+ASTNode* Parser::expression1() {
+	ASTNode* termNode;
+	ASTNode* expression1Node;
+
 	switch (token.type) {
-	case plus: case minus:
+	case plus:
 		getNextToken();
-		term();
-		expression1();
-		break;
-	default:
-		break;
-		//nothing
+		termNode = term();
+		expression1Node = expression1();
+		return createNode(operatorPlus, expression1Node, termNode);
+	case minus:
+		getNextToken();
+		termNode = term();
+		expression1Node = expression1();
+		return createNode(operatorMinus, expression1Node, termNode);
 	}
+
+	return createNumberNode(0);
 }
 
 // Break a TERM down into FACTOR TERM1
-void Parser::term() {
-	factor();
-	term1();
+ASTNode* Parser::term() {
+	ASTNode* factorNode = factor();
+	ASTNode* term1Node = term1();
+
+	return createNode(operatorMul, factorNode, term1Node);
 }
 
-// Break a TERM1 down into * FACTOR TERM1 or / FACTOR TERM1 or nothing
-void Parser::term1() {
+// Break a TERM1 down into * FACTOR TERM1 or / FACTOR TERM1 or a number 1
+ASTNode* Parser::term1() {
+	ASTNode* factorNode;
+	ASTNode* term1Node;
+
 	switch (token.type) {
-	case mul: case division:
+	case mul: 
 		getNextToken();
-		factor();
-		term1();
-		break;
-	default:
-		break;
-		//nothing
+		factorNode = factor();
+		term1Node = term1();
+		return createNode(operatorMul, term1Node, factorNode);
+	case division:
+		getNextToken();
+		factorNode = factor();
+		term1Node = term1();
+		return createNode(operatorDivision, term1Node, factorNode);
 	}
+
+	return createNumberNode(1);
 }
 
 // Break a FACTOR down into ( EXP ) or - EXP or a number
-void Parser::factor() {
+ASTNode* Parser::factor() {
+	ASTNode* node;
 	switch (token.type) {
 	case openParen:
 		getNextToken();
-		expression();
+		node = expression();
 		match(')');
-		break;
+		return node;
 	case minus:
 		getNextToken();
-		factor();
-		break;
+		node = factor();
+		return createUnaryMinusNode(node);
 	case number:
-		getNextToken();
-		break;
+		{
+			double value = token.value;
+			getNextToken();
+			return createNumberNode(value);
+		}
 	default:
 		std::stringstream sstr;
 		sstr << "Unexpected token '" << token.symbol << "' at position: " << index - 1 << "."; //not sure why index is 1 ahead here...
@@ -180,5 +204,33 @@ void Parser::match(char expected) {
 	}
 }
 
-//Implementation of ParserException method used to throw exceptions with custom messages
-ParserException::ParserException(const std::string& message, int pos) : std::exception(message.c_str()), position(pos){};
+// Creates a node that looks like this [type]-[]-[LEFT]-[RIGHT]
+ASTNode* Parser::createNode(ASTNodeType type, ASTNode* left, ASTNode* right) {
+	ASTNode* node = new ASTNode;
+	node->type = type;
+	node->left = left;
+	node->right = right;
+	return node;
+}
+
+// Creates a node that looks like this [unaryMinus]-[]-[LEFT]-[]
+ASTNode* Parser::createUnaryMinusNode(ASTNode* left) {
+	ASTNode* node = new ASTNode;
+	node->type = unaryMinus;
+	node->left = left;
+	node->right = NULL;
+	return node;
+}
+
+// Creates a leaf node that looks like this [numberValue]-[value]-[]-[]
+ASTNode* Parser::createNumberNode(double value) {
+	ASTNode* node = new ASTNode;
+	node->type = numberValue;
+	node->value = value;
+	return node;
+}
+
+// Implementation of ParserException method used to throw exceptions with custom messages
+ParserException::ParserException(const std::string& message, int pos) : std::exception(message.c_str()), position(pos) {
+	
+};
