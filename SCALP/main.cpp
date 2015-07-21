@@ -4,9 +4,9 @@
 // Tests if the expression text is a valid expression
 // Outputs "VALID" to console if valid, outputs "INVALID: (exception message)" to console if invalid
 void test(const char* text) {
-	Parser parser;
+	Parser parser; ASTNode* ast;
 	try {
-		parser.parse(text);
+		ast = parser.parse(text);
 		std::cout << "\"" << text << "\"" << "  VALID" << "\n\n";
 	}
 	catch (const ParserException& e) {
