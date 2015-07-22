@@ -1,14 +1,24 @@
 /* 
- * Declares a Parser class that, given an expression, makes sure it is correct syntactically.
- * This class may be modified later for use in building an Abstract Syntax Tree.
+ * Declares a Parser class that, given an expression, returns an abstract syntax tree representing that expression
+ * Throws an ParserException if the expression given is invalid.
+ *
+ *  Sample usage:
+ *   Parser parser; ASTNode* ast;
+ *   try {
+ *     ast = parser.parse(text);
+ *   }
+ *   catch (const ParserException& e) {
+ *     std::cout << "\"" << text << "\"" << "  INVALID: " << e.what() << "\n\n";
+ *   }
 */
 
-//#define guard prevents multiple inclusion
-#ifndef SCALP_PARSER_H
-#define SCALP_PARSER_H
+//#define guard prevents multiple inclusion; follows Google style guard naming convention (<PROJECT>_<FILE>_H_)
+#ifndef SCALP_PARSER_H_
+#define SCALP_PARSER_H_
 
 #include <exception>
 #include <string>
+#include "ast.h"
 
 //Let TokenType::error = 0, TokenType::plus = 1, and so on
 //Also limits TokenType to these tokens
@@ -38,15 +48,6 @@ struct Token {
 };
 
 // Given an expression, makes sure it is correct syntactically.
-//
-// Sample usage:
-//   Parser parser;
-//   try { 
-//     parser.parse(text); 
-//   } 
-//   catch (char* excpetion) {
-//     std::cout << "Error." << std::endl; 
-//   }
 class Parser {
 	// Stores the expression that Parser is parsing
 	const char* text;
@@ -66,11 +67,16 @@ class Parser {
 
 	// A function for each non-terminal symbol (EXP, EXP1, TERM, TERM1, FACTOR)
 	// See comments in parser.cpp for further details
-	void expression();
-	void expression1();
-	void term();
-	void term1();
-	void factor();
+	ASTNode* expression();
+	ASTNode* expression1();
+	ASTNode* term();
+	ASTNode* term1();
+	ASTNode* factor();
+
+	// Used for AST node creation
+	ASTNode* createNode(ASTNodeType type, ASTNode* left, ASTNode* right);
+	ASTNode* createUnaryMinusNode(ASTNode* left);
+	ASTNode* createNumberNode(double value);
 
 	// Used to match parentheses
 	void match(char expected);
@@ -80,7 +86,7 @@ class Parser {
 	
 public:
 	// Parse expression passed in as t_text
-	void parse(const char* t_text);
+	ASTNode* parse(const char* t_text);
 };
 
 //Custome ParserException class derived from the base exception class defined in the standard library
