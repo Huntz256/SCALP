@@ -167,7 +167,7 @@ void Parser::factor() {
 	}
 }
 
-// Used to match parenthesis
+// Used to match parentheses
 void Parser::match(char expected) {
 	if (text[index - 1] == expected) {
 		getNextToken();
