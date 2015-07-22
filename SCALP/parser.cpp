@@ -96,7 +96,7 @@ double Parser::getNumber() {
 	char buffer[32] = { 0 };
 
 	// Copy the values of (index - 1) bytes from &text[index] to buffer
-	memcpy(buffer, &text[index], index - i);
+	memcpy(buffer, &text[i], index - i);
 
 	// Parses the characters in buffer, returning its value as a double
 	return atof(buffer);
