@@ -30,7 +30,7 @@ enum TokenType {
 	division,
 	endOfText,
 	openParen,
-	closenParen,
+	closedParen,
 	number
 };
 
@@ -89,7 +89,7 @@ public:
 	ASTNode* parse(const char* t_text);
 };
 
-//Custome ParserException class derived from the base exception class defined in the standard library
+//Custom ParserException class derived from the base exception class defined in the standard library
 class ParserException : public std::exception{
 	int position; //The position (AKA the index) at which the exception occurs
 
