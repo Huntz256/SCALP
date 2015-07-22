@@ -49,14 +49,20 @@ void Parser::getNextToken() {
 	// Let this token be an error for now
 	token.type = error;
 
-	// If the current character is an operator or paretheses, then this token is an operator or paretheses
-	switch (text[index]) {
-	case '+': token.type = plus; break;
-	case '-': token.type = minus; break;
-	case '*': token.type = mul; break;
-	case '/': token.type = division; break;
-	case '(': token.type = openParen; break;
-	case ')': token.type = closenParen; break;
+	if (isalpha(text[index])) {
+		token.type = variable;
+	}
+	else{
+		// If the current character is an operator or parethesis, then this token is an operator or parethesis
+		switch (text[index]) {
+		case '+': token.type = plus; break;
+		case '-': token.type = minus; break;
+		case '*': token.type = mul; break;
+		case '/': token.type = division; break;
+		case '(': token.type = openParen; break;
+		case ')': token.type = closenParen; break;
+		case '^': token.type = caret; break;
+		}
 	}
 
 	// If this token isn't an error, set its symbol
@@ -166,8 +172,31 @@ ASTNode* Parser::term1() {
 	return createNumberNode(1);
 }
 
-// Break a FACTOR down into ( EXP ) or - EXP or a number
+// Break a FACTOR down into EXPONENT FACTOR1
 ASTNode* Parser::factor() {
+	ASTNode* exponentNode = exponent();
+	ASTNode* factor1Node = factor1();
+
+	return createNode(operatorPower, exponentNode, factor1Node);
+}
+
+// Break a FACTOR1 down into ^ EXPONENT or a number 1
+ASTNode* Parser::factor1(){
+	ASTNode* exponentNode;
+	ASTNode* factor1Node;
+
+	if (token.type == caret) {
+		getNextToken();
+		exponentNode = exponent();
+		factor1Node = factor1();
+		return createNode(operatorPower, factor1Node, exponentNode);
+	}
+
+	return createNumberNode(1);
+}
+
+// Break an EXPONENT down into ( EXP ) or - EXP or a number or a variable
+ASTNode* Parser::exponent(){
 	ASTNode* node;
 	switch (token.type) {
 	case openParen:
@@ -180,11 +209,17 @@ ASTNode* Parser::factor() {
 		node = factor();
 		return createUnaryMinusNode(node);
 	case number:
-		{
-			double value = token.value;
-			getNextToken();
-			return createNumberNode(value);
-		}
+	{
+		double value = token.value;
+		getNextToken();
+		return createNumberNode(value);
+	}
+	case variable:
+	{
+		char var = token.symbol;
+		getNextToken();
+		return createVariableNode(var);
+	}
 	default:
 		std::stringstream sstr;
 		sstr << "Unexpected token '" << token.symbol << "' at position: " << index - 1 << "."; //not sure why index is 1 ahead here...
@@ -204,7 +239,7 @@ void Parser::match(char expected) {
 	}
 }
 
-// Creates a node that looks like this [type]-[]-[LEFT]-[RIGHT]
+// Creates a node that looks like this [type]-[]-[]-[LEFT]-[RIGHT]
 ASTNode* Parser::createNode(ASTNodeType type, ASTNode* left, ASTNode* right) {
 	ASTNode* node = new ASTNode;
 	node->type = type;
@@ -213,7 +248,7 @@ ASTNode* Parser::createNode(ASTNodeType type, ASTNode* left, ASTNode* right) {
 	return node;
 }
 
-// Creates a node that looks like this [unaryMinus]-[]-[LEFT]-[]
+// Creates a node that looks like this [unaryMinus]-[]-[]-[LEFT]-[]
 ASTNode* Parser::createUnaryMinusNode(ASTNode* left) {
 	ASTNode* node = new ASTNode;
 	node->type = unaryMinus;
@@ -222,7 +257,7 @@ ASTNode* Parser::createUnaryMinusNode(ASTNode* left) {
 	return node;
 }
 
-// Creates a leaf node that looks like this [numberValue]-[value]-[]-[]
+// Creates a leaf node that looks like this [numberValue]-[value]-[]-[]-[]
 ASTNode* Parser::createNumberNode(double value) {
 	ASTNode* node = new ASTNode;
 	node->type = numberValue;
@@ -230,7 +265,14 @@ ASTNode* Parser::createNumberNode(double value) {
 	return node;
 }
 
+// Creates a leaf node that looks like this [variableChar]-[]-[var]-[]-[]
+ASTNode* Parser::createVariableNode(char var) {
+	ASTNode* node = new ASTNode;
+	node->type = variableChar;
+	node->var = var;
+	return node;
+}
+
 // Implementation of ParserException method used to throw exceptions with custom messages
-ParserException::ParserException(const std::string& message, int pos) : std::exception(message.c_str()), position(pos) {
-	
-};
+// Yes, the curly brackets are supposed to be empty
+ParserException::ParserException(const std::string& message, int pos) : std::exception(message.c_str()), position(pos) {};

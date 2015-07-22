@@ -31,7 +31,9 @@ enum TokenType {
 	endOfText,
 	openParen,
 	closenParen,
-	number
+	number,
+	variable,
+	caret
 };
 
 // Define a Token structure to indicate the type of the last extracted token and its value
@@ -72,11 +74,14 @@ class Parser {
 	ASTNode* term();
 	ASTNode* term1();
 	ASTNode* factor();
+	ASTNode* factor1();
+	ASTNode* exponent();
 
 	// Used for AST node creation
 	ASTNode* createNode(ASTNodeType type, ASTNode* left, ASTNode* right);
 	ASTNode* createUnaryMinusNode(ASTNode* left);
 	ASTNode* createNumberNode(double value);
+	ASTNode* createVariableNode(char var);
 
 	// Used to match parentheses
 	void match(char expected);
@@ -97,4 +102,4 @@ public:
 	ParserException(const std::string& message, int pos); //Exception method that takes in a custom message, as well as the position of the exception
 };
 
-#endif //SCALP_PARSER_H
+#endif //SCALP_PARSER_H_

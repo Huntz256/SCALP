@@ -15,25 +15,28 @@ enum ASTNodeType
 	operatorMinus,
 	operatorMul,
 	operatorDivision,
+	operatorPower, //exponent
 	unaryMinus,
-	numberValue
+	numberValue,
+	variableChar
 };
 
 // A single node in our AST can be represented as such:
-//     [TYPE]-[VALUE]-[LEFT]-[RIGHT]
+//     [TYPE]-[VALUE]-[CHAR]-[LEFT]-[RIGHT]
 // 
 // A complete AST contains multiple nodes.
-// Here is a representation of a AST representing the expression "5+6*3":
-//             [+]-[]-[LEFT]-[RIGHT]
-//                      |         |
-//        [num]-[5]-[]-[]         [*]-[]-[LEFT]-[RIGHT]
+// Here is a representation of a AST representing the expression "x+6*3":
+//             [+]-[]-[]-[LEFT]-[RIGHT]
+//                         |       |
+//         [var]-[]-[x]-[]-[]     [*]-[]-[]-[LEFT]-[RIGHT]
 //                                         |       |
-//                           [num]-[6]-[]-[]       [num]-[3]-[]-[]
+//                        [num]-[6]-[]-[]-[]       [num]-[3]-[]-[]-[]
 class ASTNode
 {
 public:
 	ASTNodeType type;
 	double value;
+	char var;
 	ASTNode* left;
 	ASTNode* right;
 
