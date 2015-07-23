@@ -56,7 +56,7 @@ void Parser::getNextToken() {
 	case '*': token.type = mul; break;
 	case '/': token.type = division; break;
 	case '(': token.type = openParen; break;
-	case ')': token.type = closenParen; break;
+	case ')': token.type = closedParen; break;
 	}
 
 	// If this token isn't an error, set its symbol

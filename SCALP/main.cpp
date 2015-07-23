@@ -1,16 +1,29 @@
 #include <iostream>
 #include "parser.h"
+#include "evaluator.h"
 
 // Tests if the expression text is a valid expression
 // Outputs "VALID" to console if valid, outputs "INVALID: (exception message)" to console if invalid
 void test(const char* text) {
-	Parser parser; ASTNode* ast;
+	Parser parser; 
+	
 	try {
-		ast = parser.parse(text);
-		std::cout << "\"" << text << "\"" << "  VALID" << "\n\n";
+		ASTNode* ast = parser.parse(text);
+
+		try {
+			Evaluator eval;
+			double value = eval.evaluate(ast);
+
+			std::cout << text << " = " << value << "\n\n";
+		}
+		catch (EvaluatorException& exception) {
+			std::cout << text << " t " << exception.what() << "\n\n";
+		}
+
+		delete ast;
 	}
-	catch (const ParserException& e) {
-		std::cout << "\"" << text << "\"" << "  INVALID: " << e.what() << "\n\n";
+	catch (ParserException& exception1) {
+		std::cout << "\"" << text << "\"" << "  INVALID: " << exception1.what() << "\n\n";
 	}
 }
 
