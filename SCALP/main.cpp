@@ -2,8 +2,7 @@
 #include "parser.h"
 #include "evaluator.h"
 
-// Tests if the expression text is a valid expression
-// Outputs "VALID" to console if valid, outputs "INVALID: (exception message)" to console if invalid
+// Evaluates the expression given, outputs "INVALID: (exception message)" to console if invalid
 void test(const char* text) {
 	Parser parser; 
 	
@@ -29,7 +28,7 @@ void test(const char* text) {
 
 int main() {
 
-	//Test whether the following are valid (they should be)
+	//Attempt to evaluate the following valid expressions
 	test("1+1");
 	test("1 + 2 + 3 + 5");
 	test("1 * 2 * 3 * 5");
@@ -41,7 +40,7 @@ int main() {
 	test("-300 + (-3.0554) * 141292");
 	test("256256256256");
 
-	//Test whether the following are valid (they should not be)
+	//Attempt to evaluate the following invalid expressions
 	test("1 ++ 3");
 	test(" *1 / 42.5");
 	test("/52");
