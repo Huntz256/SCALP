@@ -2,6 +2,24 @@
 #include <vector>
 #include "parser.h"
 
+const bool OUTPUT_AST_TREE = false;
+std::string astTypes[17] = { "UNDEF", "+", "-", "*", "/", "^", "-()", "NUM", "VAR", "sin()", "cos()", "tan()", "sec()", "csc()", "cot()", "log()", "ln()" };
+
+// Outputs a representation of an AST tree to console
+void outputAST(ASTNode* ast, int t_level) {
+	int level = t_level + 1;
+	std::cout << ast << ":[" << astTypes[ast->type] << "]-[" << ast->value << "]-[" << ast->var << "]-[" << ast->left << "]-[" << ast->right << "]\n";
+	
+	if (ast->left != NULL) {
+		for (int i = 0; i < level; i++) { std::cout << " "; }
+		outputAST(ast->left, level);
+	}
+	if (ast->right != NULL) {
+		for (int i = 0; i < level; i++) { std::cout << " "; }
+		outputAST(ast->right, level);
+	}
+}
+
 // Helper function called by interpret() in order to identify functions within the input text
 // Based off of the Parser class's getFunction() method
 bool is3CharFunction(int i, char text[]){
@@ -100,6 +118,7 @@ void test(char input[]) {
 	// Main try/catch block that processes each equation
 	try {
 		ast = parser.parse(text);
+		if(OUTPUT_AST_TREE) outputAST(ast, 0);
 		std::cout << "Input interpreted as: " << text << "\nResult: VALID" << "\n\n";
 	}
 	catch (const ParserException& e) {
