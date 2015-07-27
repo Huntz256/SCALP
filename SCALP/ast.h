@@ -15,10 +15,19 @@ enum ASTNodeType
 	operatorMinus,
 	operatorMul,
 	operatorDivision,
-	operatorPower, //exponent
+	operatorPower, // Exponent
 	unaryMinus,
 	numberValue,
-	variableChar
+	variableChar,
+	// All functions are unary except for Log, which also requires a base
+	functionSin,
+	functionCos,
+	functionTan,
+	functionSec,
+	functionCsc,
+	functionCot,
+	functionLog,
+	functionLn
 };
 
 // A single node in our AST can be represented as such:

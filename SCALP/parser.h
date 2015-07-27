@@ -33,7 +33,17 @@ enum TokenType {
 	closenParen,
 	number,
 	variable,
-	caret
+	caret,
+	// Trig functions
+	sine,
+	cosine,
+	tangent,
+	secant,
+	cosecant,
+	cotangent,
+	// Log functions
+	logarithm,
+	naturalLog,
 };
 
 // Define a Token structure to indicate the type of the last extracted token and its value
@@ -42,11 +52,14 @@ enum TokenType {
 struct Token {
 	TokenType type;
 
-	// Used to store the token's value if is a number
+	// Used to store the token's value if it is a number
 	double value;
 
-	// Used to store the token' symbol if is a non-numberic character
+	// Used to store the token's symbol if it is a non-numeric character
 	char symbol;
+
+	// Used to store the token's abbreviated function name (sin, cos, etc) if it is a function
+	//char function[3];
 };
 
 // Given an expression, makes sure it is correct syntactically.
@@ -66,6 +79,12 @@ class Parser {
 
 	// Returns the number at the current location in the expression
 	double getNumber();
+
+	// Small helper function called by getFunction() in order to reduce the amount of code retyped
+	void requireParen();
+
+	// Given an index, returns the function located at that position or error if there is none
+	TokenType getFunction(int index);
 
 	// A function for each non-terminal symbol (EXP, EXP1, TERM, TERM1, FACTOR)
 	// See comments in parser.cpp for further details
@@ -101,5 +120,6 @@ class ParserException : public std::exception{
 public:
 	ParserException(const std::string& message, int pos); //Exception method that takes in a custom message, as well as the position of the exception
 };
+
 
 #endif //SCALP_PARSER_H_

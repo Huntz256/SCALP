@@ -49,8 +49,16 @@ void Parser::getNextToken() {
 	// Let this token be an error for now
 	token.type = error;
 
+	// If the current character is a letter, figure out if it's a function or variable
 	if (isalpha(text[index])) {
-		token.type = variable;
+		token.type = getFunction(index);
+		if (token.type != error) {
+			// Possibly need to set token.function?
+			return;
+		}
+		else {
+			token.type = variable;
+		}
 	}
 	else{
 		// If the current character is an operator or parethesis, then this token is an operator or parethesis
@@ -106,6 +114,55 @@ double Parser::getNumber() {
 
 	// Parses the characters in buffer, returning its value as a double
 	return atof(buffer);
+}
+
+void Parser::requireParen(){
+	if (text[index] != '('){
+		std::stringstream sstr;
+		sstr << "Expected '(' at position: " << index << ".";
+		throw ParserException(sstr.str(), index);
+	}
+}
+
+// Given an index, returns the function located at that position or error if there is none
+TokenType Parser::getFunction(int pos){
+	if (text[pos] == 's'){
+		if (text[pos + 1] == 'i' && text[pos + 2] == 'n'){
+			index += 3; requireParen(); return sine;
+		}
+		else if (text[pos + 1] == 'e' && text[pos + 2] == 'c'){
+			index += 3; requireParen(); return secant;
+		}
+		else return error;
+	}
+	else if (text[pos] == 'c'){
+		if (text[pos + 1] == 's' && text[pos + 2] == 'c'){
+			index += 3; requireParen(); return cosecant;
+		}
+		else if (text[pos + 1] == 'o'){
+			if (text[pos + 2] == 's'){
+				index += 3; requireParen(); return cosine;
+			}
+			else if (text[pos + 2] == 't'){
+				index += 3; requireParen(); return cotangent;
+			}
+			else return error;
+		}
+		else return error;
+	}
+	else if (text[pos] == 't' && text[pos + 1] == 'a' && text[pos + 2] == 'n'){
+		index += 3; requireParen(); return tangent;
+	}
+	else if (text[pos] == 'l'){
+		if (text[pos + 1] == 'n'){
+			index += 2; requireParen(); return naturalLog;
+		}
+		else if (text[pos + 1] == 'o' && text[pos + 2] == 'g'){
+			index += 3; requireParen(); return logarithm;
+		}
+		else return error;
+	}
+	else return error;
 }
 
 // For the functions below, EXP, TERM, FACTOR, etc. are called non-terminal symbols
@@ -220,6 +277,38 @@ ASTNode* Parser::exponent(){
 		getNextToken();
 		return createVariableNode(var);
 	}
+	case sine: 
+		getNextToken();
+		node = expression();
+		return createNode(functionSin, node, NULL);
+	case cosine: 
+		getNextToken();
+		node = expression();
+		return createNode(functionCos, node, NULL);
+	case tangent: 
+		getNextToken();
+		node = expression();
+		return createNode(functionTan, node, NULL);
+	case secant: 
+		getNextToken();
+		node = expression();
+		return createNode(functionSec, node, NULL);
+	case cosecant: 
+		getNextToken();
+		node = expression();
+		return createNode(functionCsc, node, NULL);
+	case cotangent: 
+		getNextToken();
+		node = expression();
+		return createNode(functionCot, node, NULL);
+	//case logarithm: // Special binary function node ~('-'~)
+	//	getNextToken();
+	//	node = expression();
+	//	return createNode(functionLog, node, NULL);
+	case naturalLog:
+		getNextToken();
+		node = expression();
+		return createNode(functionLn, node, NULL);
 	default:
 		std::stringstream sstr;
 		sstr << "Unexpected token '" << token.symbol << "' at position: " << index - 1 << "."; //not sure why index is 1 ahead here...
