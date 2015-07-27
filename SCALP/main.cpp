@@ -4,23 +4,28 @@
 
 // Helper function called by interpret() in order to identify functions within the input text
 // Based off of the Parser class's getFunction() method
-void isFunction(int& i, char text[]){
-	if (text[i-1] == 's'){
-		if (text[i] == 'i' && text[i+1] == 'n') i += 4;
-		else if (text[i] == 'e' && text[i+1] == 'c') i += 4;
+bool is3CharFunction(int i, char text[]){
+	if (text[i] == 's'){
+		if (text[i + 1] == 'i' && text[i + 2] == 'n') return true;
+		else if (text[i + 1] == 'e' && text[i + 2] == 'c') return true;
+		else return false;
 	}
-	else if (text[i-1] == 'c'){
-		if (text[i] == 's' && text[i+1] == 'c') i += 4;
-		else if (text[i] == 'o'){
-			if (text[i+1] == 's') i += 4;
-			else if (text[i+1] == 't') i += 4;
+	else if (text[i] == 'c'){
+		if (text[i + 1] == 's' && text[i + 2] == 'c') return true;
+		else if (text[i + 1] == 'o'){
+			if (text[i + 2] == 's') return true;
+			else if (text[i + 2] == 't') return true;
+			else return false;
 		}
+		else return false;
 	}
-	else if (text[i-1] == 't' && text[i] == 'a' && text[i+1] == 'n') i += 4;
-	else if (text[i-1] == 'l'){
-		if (text[i] == 'n') i += 3;
-		else if (text[i] == 'o' && text[i+1] == 'g') i += 4;
-	}
+	else if (text[i] == 't' && text[i + 1] == 'a' && text[i + 2] == 'n') return true;
+	else if (text[i] == 'l' && text[i + 1] == 'o' && text[i + 2] == 'g') return true;
+	else return false;
+}
+
+bool isLnFunction(int i, char text[]){
+	return text[i] == 'l' && text[i + 1] == 'n';
 }
 
 // Simple interpreter (prototype solution)
@@ -29,33 +34,41 @@ void isFunction(int& i, char text[]){
 // Example2: turns 7x into 7*x
 // Ignores the parentheses following a function such as sin(x)
 void interpret(int size, char text[]){
-	std::vector<int> flags; // For storing the indexes where '*' needs to be inserted
-
-	// Remove whitespace
+	// Remove whitespace, shift stuff down to close the gap
+	// And change everything to lowercase
 	for (int i = 0; i < size; i++){
-		if (isspace(text[i])){
+		if (isalpha(text[i])) text[i] = tolower(text[i]);
+		else if (isspace(text[i])){
 			for (int j = i; j < size; j++){
 				text[j] = text[j + 1];
 			}
 		}
 	}
 	
-	// Recalculate new size
+	// Recalculate new size to account for removed whitespace
 	size = 0;
 	while (text[size] != 0) size++;
 
 	// Add '*' where necessary
-	for (int i = 1; text[i] != 0; i++){
-		isFunction(i, text);
-		if (isdigit(text[i-1]) && isalpha(text[i]) ||
-			isdigit(text[i-1]) && text[i] == '(' ||
-			isalpha(text[i-1]) && isdigit(text[i]) ||
-			isalpha(text[i-1]) && text[i] == '('){
+	for (int i = 1; i < size; i++){
+		// Calls the helper function defined above to skip any function tokens and their opening parentheses
+		if (is3CharFunction(i - 1, text)) i += 4;
+		else if (isLnFunction(i - 1, text)) i += 3;
+		// Check for familiar patters indicating implied multiplication
+		else if (isdigit(text[i - 1]) && isalpha(text[i]) ||
+				isdigit(text[i - 1]) && text[i] == '(' ||
+				isalpha(text[i - 1]) && isdigit(text[i]) ||
+				isalpha(text[i - 1]) && text[i] == '(' ||
+				isdigit(text[i - 1]) && is3CharFunction(i, text) ||
+				isdigit(text[i - 1]) && isLnFunction(i, text) ||
+				isalpha(text[i - 1]) && is3CharFunction(i, text) ||
+				isalpha(text[i - 1]) && isLnFunction(i, text)){
+			// Iterate backwards to shift the entire string up so there's room to stick the '*' in
 			for (int j = size + 1; j > i && j > 0; j--){
 				text[j] = text[j - 1];
 			}
-			text[i] = '*';
-			size++;
+			text[i] = '*'; // Stick the asterisk in there
+			size++; // String got longer
 		}
 	}
 }
@@ -63,23 +76,25 @@ void interpret(int size, char text[]){
 // Tests if the expression text is a valid expression
 // Outputs "VALID" to console if valid, outputs "INVALID: (exception message)" to console if invalid
 void test(char input[]) {
-	// Get input string size
+	// Get input string size by incrementing up to the string termination character '\0'
 	int size = 0;
 	while (input[size] != 0) size++;
 
-	std::cout << "\"" << input << "\"\n";
+	std::cout << "\"" << input << "\"\n"; // Prints out the original input string
 	std::cout << "Char length: " << size << std::endl;
 	if (size > 42){
 		std::cout << "Input exceeds character limit of 42. Cannot compute.";
 		return;
 	}
 
-	Parser parser; ASTNode* ast = NULL; 
-	char text[42];
+	Parser parser; 
+	ASTNode* ast = NULL; // It's good practice to always initialize pointers to NULL (or folks on the internet say)
+	char text[42]; // Picked 42 as an arbitrary number; could be extended later on to accomodate longer equations
 
-	strcpy_s(text, input);
-	interpret(size, text);
+	strcpy_s(text, input); // Copies the input char array into an explicitly defined one so that it can be modified
+	interpret(size, text); // Directly modifies the text array to take out whitespace, add '*', etc.
 
+	// Main try/catch block that processes each equation
 	try {
 		ast = parser.parse(text);
 		std::cout << "Input interpreted as: " << text << "\nResult: VALID" << "\n\n";
@@ -92,6 +107,7 @@ void test(char input[]) {
 int main() {
 	// Test whether the following are valid (they should be)
 	std::cout << "These should be valid:\n\n";
+	
 	/*test("1+1");
 	test("1 + 2 + 3 + 5");
 	test("1 * 2 * 3 * 5");
@@ -141,10 +157,16 @@ int main() {
 	test("csc(8z)");
 	test("cot(5)"); test("cot(x)"); test("cot(x^(6+y))");
 	test("ln(5)"); test("ln(x)"); test("ln(x * 7h)");
+	test("Sin(x)");
+	test("xsec(x)");
+	test("(xsec(x))");
+	test("5sin(x)");
+	test("x^2ln(x)");
 
 	// Test whether the following are valid (they should not be)
-	/*std::cout << "These should not be valid:\n\n";
-	test("1 ++ 3");
+	std::cout << "These should not be valid:\n\n";
+	
+	/*test("1 ++ 3");
 	test(" *1 / 42.5");
 	test("/52");
 	test("42 ** 8");
@@ -152,6 +174,11 @@ int main() {
 	test("A: heheh A: go left");
 	test("x**5");
 	test("x ^^ y");*/
+
+	test("sin*(x)");
+	test("sinch(x)");
+	test("sinx");
+	test("cost(x)");
 
 	// Pause the program
 	std::cout << "Press enter to continue...";

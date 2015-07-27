@@ -311,7 +311,7 @@ ASTNode* Parser::exponent(){
 		return createNode(functionLn, node, NULL);
 	default:
 		std::stringstream sstr;
-		sstr << "Unexpected token '" << token.symbol << "' at position: " << index - 1 << "."; //not sure why index is 1 ahead here...
+		sstr << "Unexpected token '" << text[index] /*token.symbol*/ << "' at position: " << index << "."; //not sure why index is sometimes 1 ahead here...
 		throw ParserException(sstr.str(), index - 1);
 	}
 }
