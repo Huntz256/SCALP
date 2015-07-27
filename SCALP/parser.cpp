@@ -51,7 +51,7 @@ void Parser::getNextToken() {
 
 	// If the current character is a letter, figure out if it's a function or variable
 	if (isalpha(text[index])) {
-		token.type = getFunction(index);
+		token.type = getFunction();
 		if (token.type != error) {
 			// Possibly need to set token.function?
 			return;
@@ -70,6 +70,7 @@ void Parser::getNextToken() {
 		case '(': token.type = openParen; break;
 		case ')': token.type = closenParen; break;
 		case '^': token.type = caret; break;
+		//case ',': token.type = comma; break;
 		}
 	}
 
@@ -116,16 +117,29 @@ double Parser::getNumber() {
 	return atof(buffer);
 }
 
+// Helper method called by Parser::getFunction() to make sure a function is followed by parentheses
 void Parser::requireParen(){
 	if (text[index] != '('){
 		std::stringstream sstr;
-		sstr << "Expected '(' at position: " << index << ".";
+		sstr << "Functions require parentheses. Missing '(' at position: " << index << ".";
 		throw ParserException(sstr.str(), index);
 	}
 }
 
+// Helper method called by Parser:getFunction() to specifically deal with logarithms
+// Allows logs to have a specific base or just have an implied base of 10
+// Ex: log(2,8) is valid, interpreted as log base-2 of 8
+// Ex: log(5) is also valid, interpreted as log base-10 of 5
+TokenType Parser::handleLog(){
+	for (int i = index + 1; text[i] != ')' && text[i] != 0; i++){
+		if (text[i] == ',') return binaryLog; // Checks to see if there's a comma that would signal a log base declaration
+	}
+	return unaryLog; // Else it's just a base-10 log
+}
+
 // Given an index, returns the function located at that position or error if there is none
-TokenType Parser::getFunction(int pos){
+TokenType Parser::getFunction(){
+	int pos = index; 
 	if (text[pos] == 's'){
 		if (text[pos + 1] == 'i' && text[pos + 2] == 'n'){
 			index += 3; requireParen(); return sine;
@@ -158,7 +172,7 @@ TokenType Parser::getFunction(int pos){
 			index += 2; requireParen(); return naturalLog;
 		}
 		else if (text[pos + 1] == 'o' && text[pos + 2] == 'g'){
-			index += 3; requireParen(); return logarithm;
+			index += 3; requireParen(); return handleLog();
 		}
 		else return error;
 	}
@@ -257,6 +271,11 @@ ASTNode* Parser::exponent(){
 	ASTNode* node;
 	switch (token.type) {
 	case openParen:
+		if (text[index] == ')'){
+			std::stringstream sstr;
+			sstr << "Empty parentheses found at position: " << index - 1<< ".";
+			throw ParserException(sstr.str(), index);
+		}
 		getNextToken();
 		node = expression();
 		match(')');
@@ -301,10 +320,22 @@ ASTNode* Parser::exponent(){
 		getNextToken();
 		node = expression();
 		return createNode(functionCot, node, NULL);
-	//case logarithm: // Special binary function node ~('-'~)
-	//	getNextToken();
-	//	node = expression();
-	//	return createNode(functionLog, node, NULL);
+	case unaryLog:
+	{
+		getNextToken();
+		ASTNode *baseNode = createNumberNode(10);
+		node = expression();
+		return createNode(functionLog, baseNode, node);
+	}
+	case binaryLog:
+	{
+		getNextToken();
+		ASTNode *baseNode = createNumberNode(getNumber());
+		match(','); 
+		index++; // Skips the comma
+		node = expression();
+		return createNode(functionLog, baseNode, node);
+	}
 	case naturalLog:
 		getNextToken();
 		node = expression();

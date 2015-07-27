@@ -42,8 +42,10 @@ enum TokenType {
 	cosecant,
 	cotangent,
 	// Log functions
-	logarithm,
-	naturalLog,
+	unaryLog, // Base-10 log
+	binaryLog, // Base-something else log
+	naturalLog, // Log found in the wild and not manufactured by humans
+	//comma // Used to declare the base in logarithms
 };
 
 // Define a Token structure to indicate the type of the last extracted token and its value
@@ -80,11 +82,15 @@ class Parser {
 	// Returns the number at the current location in the expression
 	double getNumber();
 
-	// Small helper function called by getFunction() in order to reduce the amount of code retyped
+	// Small helper method called by getFunction() in order to reduce the amount of code retyped
+	// Checks to see if a function is followed by parentheses
 	void requireParen();
 
+	// Helper method called by getFunction() in order to specifically deal with logarithms (see implementation for details)
+	TokenType handleLog();
+
 	// Given an index, returns the function located at that position or error if there is none
-	TokenType getFunction(int index);
+	TokenType getFunction();
 
 	// A function for each non-terminal symbol (EXP, EXP1, TERM, TERM1, FACTOR)
 	// See comments in parser.cpp for further details

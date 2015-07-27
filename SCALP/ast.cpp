@@ -6,15 +6,16 @@
 #include "ast.h"
 #include <iostream>
 
-//Constructor
+// Constructor
 ASTNode::ASTNode() {
-	type = undefined;
-	value = 0;
-	left = NULL;
-	right = NULL;
+	this->type = undefined;
+	this->value = 0;
+	this->var = 0;
+	this->left = NULL;
+	this->right = NULL;
 }
 
-//Destructor
+// Destructor
 ASTNode::~ASTNode() {
 	delete left;
 	delete right;

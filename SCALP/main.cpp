@@ -109,7 +109,7 @@ void test(char input[]) {
 	}
 
 	Parser parser; 
-	ASTNode* ast = NULL; // It's good practice to always initialize pointers to NULL (or folks on the internet say)
+	ASTNode* ast = NULL; // It's good practice to always initialize pointers to NULL (or so folks on the internet say)
 	char text[42]; // Picked 42 as an arbitrary number; could be extended later on to accomodate longer equations
 
 	strcpy_s(text, input); // Copies the input char array into an explicitly defined one so that it can be modified
@@ -118,7 +118,7 @@ void test(char input[]) {
 	// Main try/catch block that processes each equation
 	try {
 		ast = parser.parse(text);
-		if(OUTPUT_AST_TREE) outputAST(ast, 0);
+		if(OUTPUT_AST_TREE) outputAST(ast, 4);
 		std::cout << "Input interpreted as: " << text << "\nResult: VALID" << "\n\n";
 	}
 	catch (const ParserException& e) {
@@ -169,9 +169,9 @@ int main() {
 	test("(5*(x+2))");
 	test("(7x)");
 	test("(7*x)");
-	test("(sin(x))");
+	test("(sin(x))");*/
 	
-	test("sin(5)"); test("sin(x)"); test("sin(x + 5)");
+	/*test("sin(5)"); test("sin(x)"); test("sin(x + 5)");
 	test("cos(5)"); test("cos(x)"); test("cos(x^2+5)");
 	test("tan(5)"); test("tan(x)"); test("tan(x+78)");
 	test("sec(5)"); test("sec(x)"); test("sec(x+5y)");
@@ -185,10 +185,12 @@ int main() {
 	test("5sin(x)");
 	test("x^2ln(x)");*/
 
-	test("(x+2y)5");
+	/*test("(x+2y)5");
 	test("(x+2y)x");
 	test("sin(x)5");
-	test("sin(x)y");
+	test("sin(x)y");*/
+
+
 
 	// Test whether the following are valid (they should not be)
 	std::cout << "These should not be valid:\n\n";
@@ -206,6 +208,10 @@ int main() {
 	test("sinch(x)");
 	test("sinx");
 	test("cost(x)");*/
+
+	test("sin()");
+	test("()");
+	test("5()");
 
 	// Pause the program
 	std::cout << "Press enter to continue...";
