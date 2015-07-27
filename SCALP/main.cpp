@@ -55,14 +55,17 @@ void interpret(int size, char text[]){
 		if (is3CharFunction(i - 1, text)) i += 4;
 		else if (isLnFunction(i - 1, text)) i += 3;
 		// Check for familiar patters indicating implied multiplication
-		else if (isdigit(text[i - 1]) && isalpha(text[i]) ||
-				isdigit(text[i - 1]) && text[i] == '(' ||
-				isalpha(text[i - 1]) && isdigit(text[i]) ||
-				isalpha(text[i - 1]) && text[i] == '(' ||
-				isdigit(text[i - 1]) && is3CharFunction(i, text) ||
-				isdigit(text[i - 1]) && isLnFunction(i, text) ||
-				isalpha(text[i - 1]) && is3CharFunction(i, text) ||
-				isalpha(text[i - 1]) && isLnFunction(i, text)){
+		else if (isdigit(text[i - 1]) && isalpha(text[i]) || // 5x -> 5*x
+				isdigit(text[i - 1]) && text[i] == '(' || // 5(x) -> 5*(x)
+				isalpha(text[i - 1]) && isdigit(text[i]) || // x5 -> x*5
+				isalpha(text[i - 1]) && text[i] == '(' || // x(2) -> x*(2)
+				isdigit(text[i - 1]) && is3CharFunction(i, text) || // 5sin(x) -> 5*sin(x)
+				isdigit(text[i - 1]) && isLnFunction(i, text) || // 5ln(x) -> 5*ln(x)
+				isalpha(text[i - 1]) && is3CharFunction(i, text) || // xsin(x) -> x*sin(x)
+				isalpha(text[i - 1]) && isLnFunction(i, text) || // xln(x) -> x*ln(x)
+				text[i - 1] == ')' && isdigit(text[i]) || // (x)5 = (x)*5
+				text[i - 1] == ')' && isalpha(text[i])  // (2)x = (2)*x
+				){ 
 			// Iterate backwards to shift the entire string up so there's room to stick the '*' in
 			for (int j = size + 1; j > i && j > 0; j--){
 				text[j] = text[j - 1];
@@ -143,7 +146,7 @@ int main() {
 	test("x ^ y");
 	test("5 + y ^ 21 x");*/
 
-	test("(5 ( x + 2))");
+	/*test("(5 ( x + 2))");
 	test("(5*(x+2))");
 	test("(7x)");
 	test("(7*x)");
@@ -161,7 +164,12 @@ int main() {
 	test("xsec(x)");
 	test("(xsec(x))");
 	test("5sin(x)");
-	test("x^2ln(x)");
+	test("x^2ln(x)");*/
+
+	test("(x+2y)5");
+	test("(x+2y)x");
+	test("sin(x)5");
+	test("sin(x)y");
 
 	// Test whether the following are valid (they should not be)
 	std::cout << "These should not be valid:\n\n";
@@ -175,10 +183,10 @@ int main() {
 	test("x**5");
 	test("x ^^ y");*/
 
-	test("sin*(x)");
+	/*test("sin*(x)");
 	test("sinch(x)");
 	test("sinx");
-	test("cost(x)");
+	test("cost(x)");*/
 
 	// Pause the program
 	std::cout << "Press enter to continue...";
