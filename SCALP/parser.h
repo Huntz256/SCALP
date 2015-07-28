@@ -12,7 +12,7 @@
  *   }
 */
 
-//#define guard prevents multiple inclusion; follows Google style guard naming convention (<PROJECT>_<FILE>_H_)
+// #define guard prevents multiple inclusion; follows Google style guard naming convention (<PROJECT>_<FILE>_H_)
 #ifndef SCALP_PARSER_H_
 #define SCALP_PARSER_H_
 
@@ -30,8 +30,22 @@ enum TokenType {
 	division,
 	endOfText,
 	openParen,
-	closedParen,
-	number
+	closenParen,
+	number,
+	variable,
+	caret,
+	// Trig functions
+	sine,
+	cosine,
+	tangent,
+	secant,
+	cosecant,
+	cotangent,
+	// Log functions
+	unaryLog, // Base-10 log
+	binaryLog, // Base-something else log
+	naturalLog, // Log found in the wild and not manufactured by humans
+	//comma // Used to declare the base in logarithms
 };
 
 // Define a Token structure to indicate the type of the last extracted token and its value
@@ -40,11 +54,14 @@ enum TokenType {
 struct Token {
 	TokenType type;
 
-	// Used to store the token's value if is a number
+	// Used to store the token's value if it is a number
 	double value;
 
-	// Used to store the token' symbol if is a non-numberic character
+	// Used to store the token's symbol if it is a non-numeric character
 	char symbol;
+
+	// Used to store the token's abbreviated function name (sin, cos, etc) if it is a function
+	//char function[3];
 };
 
 // Given an expression, makes sure it is correct syntactically.
@@ -65,6 +82,16 @@ class Parser {
 	// Returns the number at the current location in the expression
 	double getNumber();
 
+	// Small helper method called by getFunction() in order to reduce the amount of code retyped
+	// Checks to see if a function is followed by parentheses
+	void requireParen();
+
+	// Helper method called by getFunction() in order to specifically deal with logarithms (see implementation for details)
+	TokenType handleLog();
+
+	// Given an index, returns the function located at that position or error if there is none
+	TokenType getFunction();
+
 	// A function for each non-terminal symbol (EXP, EXP1, TERM, TERM1, FACTOR)
 	// See comments in parser.cpp for further details
 	ASTNode* expression();
@@ -72,11 +99,14 @@ class Parser {
 	ASTNode* term();
 	ASTNode* term1();
 	ASTNode* factor();
+	ASTNode* factor1();
+	ASTNode* exponent();
 
 	// Used for AST node creation
 	ASTNode* createNode(ASTNodeType type, ASTNode* left, ASTNode* right);
 	ASTNode* createUnaryMinusNode(ASTNode* left);
 	ASTNode* createNumberNode(double value);
+	ASTNode* createVariableNode(char var);
 
 	// Used to match parentheses
 	void match(char expected);
@@ -89,7 +119,7 @@ public:
 	ASTNode* parse(const char* t_text);
 };
 
-//Custom ParserException class derived from the base exception class defined in the standard library
+// Custom ParserException class derived from the base exception class defined in the standard library
 class ParserException : public std::exception{
 	int position; //The position (AKA the index) at which the exception occurs
 
@@ -97,4 +127,5 @@ public:
 	ParserException(const std::string& message, int pos); //Exception method that takes in a custom message, as well as the position of the exception
 };
 
-#endif //SCALP_PARSER_H
+
+#endif // SCALP_PARSER_H_
