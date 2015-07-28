@@ -123,7 +123,7 @@ double Parser::getNumber() {
 void Parser::requireParen(){
 	if (text[index] != '('){
 		std::stringstream sstr;
-		sstr << "Functions require parentheses. Missing '(' at position: " << index << ".";
+		sstr << "Functions require parentheses. Found '" << text[index] << "' instead of '(' at position: " << index << ".";
 		throw ParserException(sstr.str(), index);
 	}
 }
@@ -277,7 +277,7 @@ ASTNode* Parser::exponent(){
 	case openParen:
 		if (text[index] == ')'){
 			std::stringstream sstr;
-			sstr << "Empty parentheses found at position: " << index - 1<< ".";
+			sstr << "Missing expression after position: " << index - 1 << ".";
 			throw ParserException(sstr.str(), index);
 		}
 		getNextToken();

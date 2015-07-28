@@ -12,7 +12,7 @@
  *   }
 */
 
-//#define guard prevents multiple inclusion; follows Google style guard naming convention (<PROJECT>_<FILE>_H_)
+// #define guard prevents multiple inclusion; follows Google style guard naming convention (<PROJECT>_<FILE>_H_)
 #ifndef SCALP_PARSER_H_
 #define SCALP_PARSER_H_
 
@@ -119,7 +119,7 @@ public:
 	ASTNode* parse(const char* t_text);
 };
 
-//Custome ParserException class derived from the base exception class defined in the standard library
+// Custom ParserException class derived from the base exception class defined in the standard library
 class ParserException : public std::exception{
 	int position; //The position (AKA the index) at which the exception occurs
 
@@ -128,4 +128,4 @@ public:
 };
 
 
-#endif //SCALP_PARSER_H_
+#endif // SCALP_PARSER_H_

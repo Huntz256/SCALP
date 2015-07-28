@@ -3,7 +3,7 @@
 * Inner nodes represent operators and leafs are numerical values.
 */
 
-//#define guard prevents multiple inclusion
+// #define guard prevents multiple inclusion
 #ifndef SCALP_AST_H_
 #define SCALP_AST_H_
 
