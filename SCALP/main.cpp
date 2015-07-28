@@ -190,7 +190,11 @@ int main() {
 	test("sin(x)5");
 	test("sin(x)y");*/
 
-
+	test("log(5)");
+	test("log(x)");
+	test("log(x^2+5)");
+	test("log(5, x)");
+	test("xlog(9, x^2y)");
 
 	// Test whether the following are valid (they should not be)
 	std::cout << "These should not be valid:\n\n";
@@ -209,9 +213,18 @@ int main() {
 	test("sinx");
 	test("cost(x)");*/
 
-	test("sin()");
+	/*test("sin()");
 	test("()");
-	test("5()");
+	test("5()");*/
+
+	test("log()");
+	test("logu()");
+	test("log(");
+	test("log(5");
+	test("log(5, ");
+	test("log(5,)");
+	test("log(x,y)");
+	test("log(x,5)");
 
 	// Pause the program
 	std::cout << "Press enter to continue...";

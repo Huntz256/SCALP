@@ -105,7 +105,9 @@ double Parser::getNumber() {
 	}
 
 	if (index - i == 0) {
-		throw ParserException("Number expected, but not found!", index);
+		std::stringstream sstr;
+		sstr << "Number expected at position: " << index << ", but not found.";
+		throw ParserException(sstr.str(), index);
 	}
 
 	char buffer[32] = { 0 };
@@ -268,6 +270,8 @@ ASTNode* Parser::factor1(){
 
 // Break an EXPONENT down into ( EXP ) or - EXP or a number or a variable
 ASTNode* Parser::exponent(){
+	if (text[index] == 0) throw ParserException("Unexpected termination of expression.", index);
+
 	ASTNode* node;
 	switch (token.type) {
 	case openParen:
@@ -331,8 +335,12 @@ ASTNode* Parser::exponent(){
 	{
 		getNextToken();
 		ASTNode *baseNode = createNumberNode(getNumber());
-		match(','); 
-		index++; // Skips the comma
+		if (text[index] == ',') index++; // Skips the comma
+		else{
+			std::stringstream sstr;
+			sstr << "Expected ',' at position: " << index << ".";
+			throw ParserException(sstr.str(), index);
+		}
 		node = expression();
 		return createNode(functionLog, baseNode, node);
 	}
