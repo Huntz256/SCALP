@@ -1,12 +1,18 @@
+/*
+* Implements the Tester class in test.h
+*/
+
 #include "interpreter.h"
 #include "parser.h"
+#include "test.h"
 #include <iostream>
 
 const bool OUTPUT_AST_TREE = false;
 std::string astTypes[17] = { "UNDEF", "+", "-", "*", "/", "^", "-()", "NUM", "VAR", "sin()", "cos()", "tan()", "sec()", "csc()", "cot()", "log()", "ln()" };
+Interpreter interpreter;
 
 // Outputs a representation of an AST tree to console
-void outputAST(ASTNode* ast, int t_level) {
+void Tester::outputAST(ASTNode* ast, int t_level) {
 	int level = t_level + 1;
 	std::cout << ast << ":[" << astTypes[ast->type] << "]-[" << ast->value << "]-[" << ast->var << "]-[" << ast->left << "]-[" << ast->right << "]\n";
 
@@ -22,8 +28,8 @@ void outputAST(ASTNode* ast, int t_level) {
 
 // Tests if the expression text is a valid expression
 // Outputs "VALID" to console if valid, outputs "INVALID: (exception message)" to console if invalid
-void test(char input[]) {
-	int size = Interpreter::getSize(input);
+void Tester::test(char input[]) {
+	int size = interpreter.getSize(input);
 
 	std::cout << "\"" << input << "\"\n"; // Prints out the original input string
 	std::cout << "Char length: " << size << std::endl;
@@ -37,12 +43,12 @@ void test(char input[]) {
 	char text[42]; // Picked 42 as an arbitrary number; could be extended later on to accomodate longer equations
 
 	strcpy_s(text, input); // Copies the input char array into an explicitly defined one so that it can be modified
-	Interpreter::interpret(text); // Directly modifies the text array to take out whitespace, add '*', etc.
+	interpreter.interpret(text); // Directly modifies the text array to take out whitespace, add '*', etc.
 
 	// Main try/catch block that processes each equation
 	try {
 		ast = parser.parse(text);
-		if (OUTPUT_AST_TREE) outputAST(ast, 4);
+		if (OUTPUT_AST_TREE) outputAST(ast, 0);
 		std::cout << "Input interpreted as: " << text << "\nResult: VALID" << "\n\n";
 	}
 	catch (const ParserException& e) {
@@ -51,7 +57,7 @@ void test(char input[]) {
 }
 
 ////////////// TEST SUITES ////////////////
-void testArithmetic(){
+void Tester::testArithmetic(){
 	std::cout << "These should be valid:\n\n";
 
 	test("1+1");
@@ -76,7 +82,7 @@ void testArithmetic(){
 	test("x**5");
 }
 
-void testVariables(){
+void Tester::testVariables(){
 	std::cout << "These should be valid:\n\n";
 
 	test("x+1");
@@ -100,7 +106,7 @@ void testVariables(){
 
 }
 
-void testExponents(){
+void Tester::testExponents(){
 	std::cout << "These should be valid:\n\n";
 
 	test("2^8");
@@ -114,7 +120,7 @@ void testExponents(){
 	test("x ^^ y");
 }
 
-void testInterpreter(){
+void Tester::testInterpreter(){
 	std::cout << "These should be valid:\n\n";
 
 	test("(5 ( x + 2))");
@@ -131,7 +137,7 @@ void testInterpreter(){
 
 }
 
-void testFunctions(){
+void Tester::testFunctions(){
 	std::cout << "These should be valid:\n\n";
 
 	test("sin(5)"); test("sin(x)"); test("sin(x + 5)");
@@ -156,7 +162,7 @@ void testFunctions(){
 	test("cost(x)");
 }
 
-void testLogs(){
+void Tester::testLogs(){
 	std::cout << "These should be valid:\n\n";
 
 	test("log(5)");

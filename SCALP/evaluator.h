@@ -3,7 +3,7 @@
 * that the AST represents.
 */
 
-//#define guard prevents multiple inclusion
+//#define guard prevents multiple inclusion; follows Google style guard naming convention (<PROJECT>_<FILE>_H_)
 #ifndef SCALP_EVALUATOR_H_
 #define SCALP_EVALUATOR_H_
 

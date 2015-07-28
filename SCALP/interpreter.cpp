@@ -1,3 +1,8 @@
+/*
+* Implements the Interpreter class in interpreter.h
+* See comments in interpreter.h for more details
+*/
+
 #include "interpreter.h"
 #include <iostream>
 

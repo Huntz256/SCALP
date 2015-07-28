@@ -3,7 +3,7 @@
 * Inner nodes represent operators and leafs are numerical values.
 */
 
-// #define guard prevents multiple inclusion
+// #define guard prevents multiple inclusion; follows Google style guard naming convention (<PROJECT>_<FILE>_H_)
 #ifndef SCALP_AST_H_
 #define SCALP_AST_H_
 
@@ -15,10 +15,11 @@ enum ASTNodeType
 	operatorMinus,
 	operatorMul,
 	operatorDivision,
-	operatorPower, // Exponent
+	operatorPower,
 	unaryMinus,
 	numberValue,
 	variableChar,
+
 	// All functions are unary except for Log, which also requires a base
 	functionSin,
 	functionCos,
