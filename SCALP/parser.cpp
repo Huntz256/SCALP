@@ -56,7 +56,7 @@ void Parser::getNextToken() {
 	case '*': token.type = mul; break;
 	case '/': token.type = division; break;
 	case '(': token.type = openParen; break;
-	case ')': token.type = closenParen; break;
+	case ')': token.type = closedParen; break;
 	}
 
 	// If this token isn't an error, set its symbol
@@ -95,8 +95,8 @@ double Parser::getNumber() {
 
 	char buffer[32] = { 0 };
 
-	// Copy the values of (index - 1) bytes from &text[index] to buffer
-	memcpy(buffer, &text[index], index - i);
+	// Copy the values of (index - 1) bytes from &text[i] to buffer
+	memcpy(buffer, &text[i], index - i);
 
 	// Parses the characters in buffer, returning its value as a double
 	return atof(buffer);
