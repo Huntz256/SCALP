@@ -1,5 +1,5 @@
 #include <iostream>
-#include "test.h"
+#include "tester.h"
 
 int main() {
 	// All implementations have been moved to other files in an attempt to keep main.cpp clean

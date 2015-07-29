@@ -4,8 +4,8 @@
  */
 
 // #define guard prevents multiple inclusion; follows Google style guard naming convention (<PROJECT>_<FILE>_H_)
-#ifndef SCALP_TEST_H_
-#define SCALP_TEST_H_
+#ifndef SCALP_TESTER_H_
+#define SCALP_TESTER_H_
 
 #include "ast.h"
 

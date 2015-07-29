@@ -4,7 +4,7 @@
 
 #include "interpreter.h"
 #include "parser.h"
-#include "test.h"
+#include "tester.h"
 #include <iostream>
 
 const bool OUTPUT_AST_TREE = false;
