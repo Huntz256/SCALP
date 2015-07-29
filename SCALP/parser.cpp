@@ -59,8 +59,13 @@ ASTNode* Parser::simplify(ASTNode* t_ast)
 
 	// Use identity rules (x^1 = x, x*1 = x; x+0 = x) to simplify top of tree
 	if (ast->left != NULL && ast->left->left != NULL && ast->left->right != NULL) {
-		if (((ast->type == operatorPower) && (ast->right->value == 1)) || ((ast->type == operatorMul) && (ast->right->value == 1)) || ((ast->type == operatorPlus) && (ast->right->value == 0))) {
+		if (((ast->type == operatorPower) && (ast->right->type == numberValue) && (ast->right->value == 1)) || ((ast->type == operatorMul) && (ast->right->type == numberValue) && (ast->right->value == 1)) || ((ast->type == operatorPlus) && (ast->right->type == numberValue) && (ast->right->value == 0))) {
 			ast->type = ast->left->type; ast->right = ast->left->right; ast->left = ast->left->left;
+		}
+	}
+	else if (ast->right != NULL && ast->right->left != NULL && ast->right->right != NULL) {
+		if (((ast->type == operatorPower) && (ast->left->type == numberValue) && (ast->left->value == 1)) || ((ast->type == operatorMul) && (ast->left->type == numberValue) && (ast->left->value == 1)) || ((ast->type == operatorPlus) && (ast->left->type == numberValue) && (ast->left->value == 0))) {
+			ast->type = ast->right->type; ast->left = ast->right->left; ast->right = ast->right->right;
 		}
 	}
 	

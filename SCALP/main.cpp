@@ -6,7 +6,7 @@ int main() {
 	// The test function can still be called directly from here
 	// Oh and FYI, the parser exception positions correspond to the interpreted equation, not the original input
 	Tester tester;
-	tester.testLogs();
+	//tester.testLogs();
 	//tester.testArithmetic();
 	//tester.testVariables();
 	//tester.testExponents();
