@@ -6,10 +6,95 @@
 #include "parser.h"
 #include "tester.h"
 #include <iostream>
+#include <string>
+#include <sstream>
 
 const bool OUTPUT_AST_TREE = true;
 std::string astTypes[17] = { "UNDEF", "+", "-", "*", "/", "^", "-()", "NUM", "VAR", "sin()", "cos()", "tan()", "sec()", "csc()", "cot()", "log()", "ln()" };
 Interpreter interpreter;
+
+// Outputs a graphical representation of a horizontal AST tree to console
+void Tester::outputGraphicalAST(ASTNode* ast){
+	// Stores literally just a list of strings that the for loop just needs to print to console line by line
+	std::vector<std::string> nodes;
+	// Helper method that turns the passed in AST tree into a properly ordered list of strings
+	generateGraphicalAST(nodes, ast, 0, false, 0, 0);
+	// Simply iterates through each of the strings in the vector and prints them to console
+	for (std::vector<std::string>::iterator it = nodes.begin(); it != nodes.end(); it++){
+		std::cout << *it << "\n";
+	}
+}
+
+// Helper method called by outputGraphicalAST()
+// Uses recursion to fill the node vector with nodes from the passed in ast
+// Directly modifies the nodes vector because it's passed in by reference
+void Tester::generateGraphicalAST(std::vector<std::string>& nodes, ASTNode* ast, int t_level, bool leftNode, int t_maxIndent, int t_vecPos){
+	int level = t_level + 1;
+	int maxIndent; // Stores how many individual spaces the tree is indented already
+
+	// If this is a left node, it needs to be inserted right after its parent node in the vector
+	if (leftNode) {
+		if (astTypes[ast->type] == "NUM") { // All the code in this block basically repeats over and over with minor changes
+			std::stringstream sstr; 
+			for (int i = 0; i < t_maxIndent; i++) sstr<< " "; // Based on the maxIndent, add the proper amount of spaces
+			if (t_level != 0) sstr << "\\"; // If this isn't the root node, add a little connecting slash thing to make things look nice 
+			sstr << "[" << ast->value << "]"; // Brackets look nice as well
+			nodes.insert(nodes.begin() + t_vecPos, sstr.str()); // Insert the node in the proper place in the vector
+			maxIndent = sstr.str().length(); // Change the maxIndent level to now match the full length of the printed tree so far
+		}
+		else if (astTypes[ast->type] == "VAR") {
+			std::stringstream sstr; 
+			for (int i = 0; i < t_maxIndent; i++) sstr << " ";
+			if (t_level != 0) sstr << "\\";
+			sstr << "[" << ast->var << "]";
+			nodes.insert(nodes.begin() + t_vecPos, sstr.str());
+			maxIndent = sstr.str().length();
+		}
+		else {
+			std::stringstream sstr;
+			for (int i = 0; i < t_maxIndent; i++) sstr << " ";
+			if (t_level != 0) sstr << "\\";
+			sstr << "[" << astTypes[ast->type] << "]";
+			nodes.insert(nodes.begin() + t_vecPos, sstr.str());
+			maxIndent = sstr.str().length();
+		}
+	}
+	// If this is a right node, it needs to be inserted right before its parent node in the vector
+	else {
+		if (astTypes[ast->type] == "NUM") {
+			std::stringstream sstr; 
+			for (int i = 0; i < t_maxIndent; i++) sstr << " ";
+			if (t_level != 0) sstr << "/";
+			sstr << "[" << ast->value << "]";
+			nodes.insert(nodes.begin() + t_vecPos, sstr.str());
+			maxIndent = sstr.str().length();
+		}
+		else if (astTypes[ast->type] == "VAR") {
+			std::stringstream sstr; 
+			for (int i = 0; i < t_maxIndent; i++) sstr << " ";
+			if (t_level != 0) sstr << "/";
+			sstr << "[" << ast->var << "]";
+			nodes.insert(nodes.begin() + t_vecPos, sstr.str());
+			maxIndent = sstr.str().length();
+		}
+		else {
+			std::stringstream sstr;
+			for (int i = 0; i < t_maxIndent; i++) sstr << " ";
+			if (t_level != 0) sstr << "/";
+			sstr << "[" << astTypes[ast->type] << "]";
+			nodes.insert(nodes.begin() + t_vecPos, sstr.str());
+			maxIndent = sstr.str().length();
+		}
+	}
+
+	if (ast->left != NULL) {
+		generateGraphicalAST(nodes, ast->left, level, true, maxIndent, t_vecPos + 1);
+	}
+	if (ast->right != NULL) {
+		generateGraphicalAST(nodes, ast->right, level, false, maxIndent, t_vecPos);
+	}
+}
+
 
 // Outputs a representation of an AST tree to console
 void Tester::outputDetailedAST(ASTNode* ast, int t_level) {
@@ -73,12 +158,12 @@ void Tester::test(char input[]) {
 	// Main try/catch block that processes each equation
 	try {
 		ast = parser.parse(text);
+		std::cout << "Input interpreted as: " << text << "\nResult: VALID" << "\n";
 		if (OUTPUT_AST_TREE) { 
 			std::cout << "AST Tree:\n";
-			outputAST(ast, 0); 
-			std::cout << "";
+			outputGraphicalAST(ast); 
+			std::cout << "\n";
 		}
-		std::cout << "Input interpreted as: " << text << "\nResult: VALID" << "\n\n";
 	}
 	catch (const ParserException& e) {
 		std::cout << "Input interpreted as: " << text << "\nResult: INVALID - " << e.what() << "\n\n";
@@ -200,7 +285,7 @@ void Tester::testLogs(){
 	test("log(5, x)");
 	test("xlog(9, x^2y)");
 
-	std::cout << "These should not be valid:\n\n";
+	/*std::cout << "These should not be valid:\n\n";
 
 	test("log()");
 	test("logu()");
@@ -209,5 +294,5 @@ void Tester::testLogs(){
 	test("log(5, ");
 	test("log(5,)");
 	test("log(x,y)");
-	test("log(x,5)");
+	test("log(x,5)");*/
 }
