@@ -12,16 +12,41 @@ std::string astTypes[17] = { "UNDEF", "+", "-", "*", "/", "^", "-()", "NUM", "VA
 Interpreter interpreter;
 
 // Outputs a representation of an AST tree to console
-void Tester::outputAST(ASTNode* ast, int t_level) {
+void Tester::outputDetailedAST(ASTNode* ast, int t_level) {
 	int level = t_level + 1;
 	std::cout << ast << ":[" << astTypes[ast->type] << "]-[" << ast->value << "]-[" << ast->var << "]-[" << ast->left << "]-[" << ast->right << "]\n";
 
 	if (ast->left != NULL) {
 		for (int i = 0; i < level; i++) { std::cout << " "; }
-		outputAST(ast->left, level);
+		outputDetailedAST(ast->left, level);
 	}
 	if (ast->right != NULL) {
 		for (int i = 0; i < level; i++) { std::cout << " "; }
+		outputDetailedAST(ast->right, level);
+	}
+}
+
+// Outputs a representation of an AST tree to console
+void Tester::outputAST(ASTNode* ast, int t_level) {
+	int level = t_level + 1;
+	if (astTypes[ast->type] == "NUM") {
+		std::cout << " [" << ast->value << "]\n";
+	}
+	else if (astTypes[ast->type] == "VAR") {
+		std::cout << " [" << ast->var << "]\n";
+	}
+	else {
+		std::cout << " [" << astTypes[ast->type] << "]\n";
+	}
+
+	if (ast->left != NULL) {
+		for (int i = 0; i < level; i++) { std::cout << "  "; }
+		//std::cout << "L: ";
+		outputAST(ast->left, level);
+	}
+	if (ast->right != NULL) {
+		for (int i = 0; i < level; i++) { std::cout << "  "; }
+		//std::cout << "R: ";
 		outputAST(ast->right, level);
 	}
 }
@@ -48,7 +73,11 @@ void Tester::test(char input[]) {
 	// Main try/catch block that processes each equation
 	try {
 		ast = parser.parse(text);
-		if (OUTPUT_AST_TREE) outputAST(ast, 0);
+		if (OUTPUT_AST_TREE) { 
+			std::cout << "AST Tree:\n";
+			outputAST(ast, 0); 
+			std::cout << "";
+		}
 		std::cout << "Input interpreted as: " << text << "\nResult: VALID" << "\n\n";
 	}
 	catch (const ParserException& e) {

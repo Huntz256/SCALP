@@ -13,6 +13,7 @@ class Tester {
 public:
 	void test(char input[]);
 	void outputAST(ASTNode* ast, int t_level);
+	void outputDetailedAST(ASTNode* ast, int t_level);
 
 	// Test suites
 	void testArithmetic();
