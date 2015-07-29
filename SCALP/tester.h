@@ -8,12 +8,15 @@
 #define SCALP_TESTER_H_
 
 #include "ast.h"
+#include <vector>
 
 class Tester {
 public:
 	void test(char input[]);
 	void outputAST(ASTNode* ast, int t_level);
 	void outputDetailedAST(ASTNode* ast, int t_level);
+	void outputGraphicalAST(ASTNode* ast);
+	void generateGraphicalAST(std::vector<std::string>& nodes, ASTNode* ast, int t_level, bool leftNode, int t_maxIndent, int t_vecPos);
 
 	// Test suites
 	void testArithmetic();

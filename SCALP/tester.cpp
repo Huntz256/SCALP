@@ -6,10 +6,92 @@
 #include "parser.h"
 #include "tester.h"
 #include <iostream>
+#include <string>
+#include <sstream>
 
 const bool OUTPUT_AST_TREE = true;
 std::string astTypes[17] = { "UNDEF", "+", "-", "*", "/", "^", "-()", "NUM", "VAR", "sin()", "cos()", "tan()", "sec()", "csc()", "cot()", "log()", "ln()" };
 Interpreter interpreter;
+
+// Outputs a graphical representation of an AST tree to console
+// Since a vertical tree would not work out in terms of spacing,
+// this method implements a horizontal tree
+void Tester::outputGraphicalAST(ASTNode* ast){
+	std::vector<std::string> nodes;
+	generateGraphicalAST(nodes, ast, 0, false, 0, 0);
+	for (std::vector<std::string>::iterator it = nodes.begin(); it != nodes.end(); it++){
+		std::cout << *it << "\n";
+	}
+}
+
+// Helper method called by outputGraphicalAST()
+// Uses recursion to fill the node vector with nodes from the passed in ast
+// Directly modifies the nodes vector because it's passed in by reference
+void Tester::generateGraphicalAST(std::vector<std::string>& nodes, ASTNode* ast, int t_level, bool leftNode, int t_maxIndent, int t_vecPos){
+	int level = t_level + 1;
+	int maxIndent;
+
+	if (leftNode) {
+		if (astTypes[ast->type] == "NUM") {
+			std::stringstream sstr; 
+			for (int i = 0; i < t_maxIndent; i++) sstr<< " ";
+			if (t_level != 0) sstr << "\\";
+			sstr << "[" << ast->value << "]";
+			nodes.insert(nodes.begin() + t_vecPos, sstr.str());
+			maxIndent = sstr.str().length();
+		}
+		else if (astTypes[ast->type] == "VAR") {
+			std::stringstream sstr; 
+			for (int i = 0; i < t_maxIndent; i++) sstr << " ";
+			if (t_level != 0) sstr << "\\";
+			sstr << "[" << ast->var << "]";
+			nodes.insert(nodes.begin() + t_vecPos, sstr.str());
+			maxIndent = sstr.str().length();
+		}
+		else {
+			std::stringstream sstr;
+			for (int i = 0; i < t_maxIndent; i++) sstr << " ";
+			if (t_level != 0) sstr << "\\";
+			sstr << "[" << astTypes[ast->type] << "]";
+			nodes.insert(nodes.begin() + t_vecPos, sstr.str());
+			maxIndent = sstr.str().length();
+		}
+	}
+	else {
+		if (astTypes[ast->type] == "NUM") {
+			std::stringstream sstr; 
+			for (int i = 0; i < t_maxIndent; i++) sstr << " ";
+			if (t_level != 0) sstr << "/";
+			sstr << "[" << ast->value << "]";
+			nodes.insert(nodes.begin() + t_vecPos, sstr.str());
+			maxIndent = sstr.str().length();
+		}
+		else if (astTypes[ast->type] == "VAR") {
+			std::stringstream sstr; 
+			for (int i = 0; i < t_maxIndent; i++) sstr << " ";
+			if (t_level != 0) sstr << "/";
+			sstr << "[" << ast->var << "]";
+			nodes.insert(nodes.begin() + t_vecPos, sstr.str());
+			maxIndent = sstr.str().length();
+		}
+		else {
+			std::stringstream sstr;
+			for (int i = 0; i < t_maxIndent; i++) sstr << " ";
+			if (t_level != 0) sstr << "/";
+			sstr << "[" << astTypes[ast->type] << "]";
+			nodes.insert(nodes.begin() + t_vecPos, sstr.str());
+			maxIndent = sstr.str().length();
+		}
+	}
+
+	if (ast->left != NULL) {
+		generateGraphicalAST(nodes, ast->left, level, true, maxIndent, t_vecPos + 1);
+	}
+	if (ast->right != NULL) {
+		generateGraphicalAST(nodes, ast->right, level, false, maxIndent, t_vecPos);
+	}
+}
+
 
 // Outputs a representation of an AST tree to console
 void Tester::outputDetailedAST(ASTNode* ast, int t_level) {
@@ -73,12 +155,12 @@ void Tester::test(char input[]) {
 	// Main try/catch block that processes each equation
 	try {
 		ast = parser.parse(text);
+		std::cout << "Input interpreted as: " << text << "\nResult: VALID" << "\n";
 		if (OUTPUT_AST_TREE) { 
 			std::cout << "AST Tree:\n";
-			outputAST(ast, 0); 
-			std::cout << "";
+			outputGraphicalAST(ast); 
+			std::cout << "\n";
 		}
-		std::cout << "Input interpreted as: " << text << "\nResult: VALID" << "\n\n";
 	}
 	catch (const ParserException& e) {
 		std::cout << "Input interpreted as: " << text << "\nResult: INVALID - " << e.what() << "\n\n";
@@ -200,7 +282,7 @@ void Tester::testLogs(){
 	test("log(5, x)");
 	test("xlog(9, x^2y)");
 
-	std::cout << "These should not be valid:\n\n";
+	/*std::cout << "These should not be valid:\n\n";
 
 	test("log()");
 	test("logu()");
@@ -209,5 +291,5 @@ void Tester::testLogs(){
 	test("log(5, ");
 	test("log(5,)");
 	test("log(x,y)");
-	test("log(x,5)");
+	test("log(x,5)");*/
 }
