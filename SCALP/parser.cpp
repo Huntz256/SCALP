@@ -33,7 +33,7 @@ ASTNode* Parser::simplify(ASTNode* t_ast)
 {
 	ASTNode* ast = t_ast;
 
-	// Move to the bottom of the tree
+	// Move down the tree
 	if ((ast->left != NULL)) {
 		simplify(ast->left);
 	}
@@ -57,17 +57,13 @@ ASTNode* Parser::simplify(ASTNode* t_ast)
 		ast->type = variableChar; ast->var = ast->right->var; ast->left = NULL; ast->right = NULL;
 	}
 
-	// Use identity rules (x^1 = x, x*1 = x; x+0 = x) to simplify bottom of tree
-	if ((ast->left != NULL) && (ast->left->type == functionLog) && (ast->left->left != NULL) && (ast->left->left->type == numberValue) && (ast->left->right != NULL) && (ast->left->right->type == numberValue)) {
+	// Use identity rules (x^1 = x, x*1 = x; x+0 = x) to simplify top of tree
+	if (ast->left != NULL && ast->left->left != NULL && ast->left->right != NULL) {
 		if (((ast->type == operatorPower) && (ast->right->value == 1)) || ((ast->type == operatorMul) && (ast->right->value == 1)) || ((ast->type == operatorPlus) && (ast->right->value == 0))) {
-			ast->type = functionLog; ast->right = ast->left->right; ast->left = ast->left->left;
+			ast->type = ast->left->type; ast->right = ast->left->right; ast->left = ast->left->left;
 		}
 	}
-	else if ((ast->left != NULL) && (ast->left->type == functionLog) && (ast->left->left != NULL) && (ast->left->left->type == numberValue) && (ast->left->right != NULL) && (ast->left->right->type == variableChar)) {
-		if (((ast->type == operatorPower) && (ast->right->value == 1)) || ((ast->type == operatorMul) && (ast->right->value == 1)) || ((ast->type == operatorPlus) && (ast->right->value == 0))) {
-			ast->type = functionLog; ast->right = ast->left->right; ast->left = ast->left->left;
-		}
-	}
+	
 	return ast;
 }
 
