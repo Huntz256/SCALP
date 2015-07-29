@@ -16,7 +16,59 @@ ASTNode* Parser::parse(const char* t_text) {
 	this->text = t_text;
 	this->index = 0;
 	this->getNextToken();
-	return this->expression();
+
+	ASTNode* ast = this->expression();
+
+	//Simplify ast
+	for (int i = 0; i < 100; i++) {
+		ast = simplify(ast);
+	}
+
+	return ast;
+}
+
+// Takes in a AST a returns a more simplified AST
+// Should be called multiple times to fully simplify a AST
+ASTNode* Parser::simplify(ASTNode* t_ast)
+{
+	ASTNode* ast = t_ast;
+
+	// Move to the bottom of the tree
+	if ((ast->left != NULL)) {
+		simplify(ast->left);
+	}
+	if ((ast->right != NULL)) {
+		simplify(ast->right);
+	}
+
+	// Use identity rules (x^1 = x, x*1 = x; x+0 = x) to simplify bottom of tree 
+	if (((ast->left != NULL) && (ast->left->type == numberValue) && (ast->right != NULL) && (ast->right->type == numberValue)) && (((ast->type == operatorPower) && (ast->left->value == 1)) || ((ast->type == operatorPower) && (ast->right->value == 1)) || ((ast->type == operatorMul) && (ast->right->value == 1)) || ((ast->type == operatorPlus) && (ast->right->value == 0)))) {
+		ast->type = numberValue; ast->value = ast->left->value; ast->left = NULL; ast->right = NULL;
+	}
+	else if (((ast->left != NULL) && (ast->left->type == variableChar) && (ast->right != NULL) && (ast->right->type == numberValue)) && (((ast->type == operatorPower) && (ast->right->value == 1)) || ((ast->type == operatorMul) && (ast->right->value == 1)) || ((ast->type == operatorPlus) && (ast->right->value == 0)))) {
+		ast->type = variableChar; ast->var = ast->left->var; ast->left = NULL; ast->right = NULL;
+	}
+
+	// Use identity rules (x^1 = x, x*1 = x; x+0 = x) to simplify bottom of tree 
+	else if (((ast->left != NULL) && (ast->left->type == numberValue) && (ast->right != NULL) && (ast->right->type == numberValue)) && (((ast->type == operatorMul) && (ast->left->value == 1)) || ((ast->type == operatorPlus) && (ast->left->value == 0)))) {
+		ast->type = numberValue; ast->value = ast->right->value; ast->left = NULL; ast->right = NULL;
+	}
+	else if (((ast->left != NULL) && (ast->left->type == numberValue) && (ast->right != NULL) && (ast->right->type == variableChar)) && (((ast->type == operatorMul) && (ast->left->value == 1)) || ((ast->type == operatorPlus) && (ast->left->value == 0)))) {
+		ast->type = variableChar; ast->var = ast->right->var; ast->left = NULL; ast->right = NULL;
+	}
+
+	// Use identity rules (x^1 = x, x*1 = x; x+0 = x) to simplify bottom of tree
+	if ((ast->left != NULL) && (ast->left->type == functionLog) && (ast->left->left != NULL) && (ast->left->left->type == numberValue) && (ast->left->right != NULL) && (ast->left->right->type == numberValue)) {
+		if (((ast->type == operatorPower) && (ast->right->value == 1)) || ((ast->type == operatorMul) && (ast->right->value == 1)) || ((ast->type == operatorPlus) && (ast->right->value == 0))) {
+			ast->type = functionLog; ast->right = ast->left->right; ast->left = ast->left->left;
+		}
+	}
+	else if ((ast->left != NULL) && (ast->left->type == functionLog) && (ast->left->left != NULL) && (ast->left->left->type == numberValue) && (ast->left->right != NULL) && (ast->left->right->type == variableChar)) {
+		if (((ast->type == operatorPower) && (ast->right->value == 1)) || ((ast->type == operatorMul) && (ast->right->value == 1)) || ((ast->type == operatorPlus) && (ast->right->value == 0))) {
+			ast->type = functionLog; ast->right = ast->left->right; ast->left = ast->left->left;
+		}
+	}
+	return ast;
 }
 
 // Skips all whitespaces between two tokens
@@ -263,7 +315,7 @@ ASTNode* Parser::factor1(){
 		getNextToken();
 		exponentNode = exponent();
 		factor1Node = factor1();
-		return createNode(operatorPower, factor1Node, exponentNode);
+		return createNode(operatorPower, exponentNode, factor1Node);
 	}
 
 	return createNumberNode(1);
@@ -271,7 +323,7 @@ ASTNode* Parser::factor1(){
 
 // Break an EXPONENT down into ( EXP ) or - EXP or a number or a variable
 ASTNode* Parser::exponent(){
-	if (text[index] == 0) throw ParserException("Unexpected termination of expression.", index);
+	//if (text[index] == 0) throw ParserException("Unexpected termination of expression.", index);
 
 	ASTNode* node;
 	switch (token.type) {

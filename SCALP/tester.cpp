@@ -7,7 +7,7 @@
 #include "tester.h"
 #include <iostream>
 
-const bool OUTPUT_AST_TREE = false;
+const bool OUTPUT_AST_TREE = true;
 std::string astTypes[17] = { "UNDEF", "+", "-", "*", "/", "^", "-()", "NUM", "VAR", "sin()", "cos()", "tan()", "sec()", "csc()", "cot()", "log()", "ln()" };
 Interpreter interpreter;
 

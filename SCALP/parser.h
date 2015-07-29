@@ -113,10 +113,14 @@ class Parser {
 
 	// Skips all whitespaces between two tokens
 	void skipWhitespaces();
+
+	// Simplifies a given AST and returns the simplified AST
+	ASTNode* simplify(ASTNode* t_ast);
 	
 public:
 	// Parse expression passed in as t_text
 	ASTNode* parse(const char* t_text);
+
 };
 
 // Custom ParserException class derived from the base exception class defined in the standard library
