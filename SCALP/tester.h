@@ -8,11 +8,13 @@
 #define SCALP_TESTER_H_
 
 #include "ast.h"
+#include "integrator.h"
 #include <vector>
 
 class Tester {
 public:
 	void test(char input[]);
+	void test1(char input[]);
 	void outputAST(ASTNode* ast, int t_level);
 	void outputDetailedAST(ASTNode* ast, int t_level);
 	void outputGraphicalAST(ASTNode* ast);

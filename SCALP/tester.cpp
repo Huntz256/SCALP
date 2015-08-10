@@ -170,6 +170,36 @@ void Tester::test(char input[]) {
 	}
 }
 
+// Attempts to integrate the expression given, outputs "INVALID" to console if invalid
+void Tester::test1(char input[]) {
+	int size = interpreter.getSize(input);
+
+	std::cout << "\"" << input << "\"\n"; // Prints out the original input string
+	std::cout << "Char length: " << size << std::endl;
+	if (size > 42) {
+		std::cout << "Input exceeds character limit of 42. Cannot compute.";
+		return;
+	}
+
+	Parser parser;
+	ASTNode* ast = NULL; // It's good practice to always initialize pointers to NULL (or so folks on the internet say)
+	char text[42]; // Picked 42 as an arbitrary number; could be extended later on to accomodate longer equations
+
+	strcpy_s(text, input); // Copies the input char array into an explicitly defined one so that it can be modified
+	interpreter.interpret(text); // Directly modifies the text array to take out whitespace, add '*', etc.
+
+	std::string solution; Integrator integrator;
+
+	try {
+		ASTNode* ast = parser.parse(text);
+		solution = integrator.integrate(ast);
+		std::cout << "integral " << text << " dx = " << solution << "\n\n";
+	}
+	catch (ParserException& exception1) {
+		std::cout << "integral " << text << " dx ->" << "  INVALID: " << exception1.what() << "\n\n";
+	}
+}
+
 ////////////// TEST SUITES ////////////////
 void Tester::testArithmetic(){
 	std::cout << "These should be valid:\n\n";

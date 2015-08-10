@@ -67,6 +67,7 @@
     <ClCompile Include="ast.cpp" />
     <ClCompile Include="evaluator.cpp" />
     <ClCompile Include="interpreter.cpp" />
+    <ClCompile Include="integrator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="tester.cpp" />
@@ -75,6 +76,7 @@
     <ClInclude Include="ast.h" />
     <ClInclude Include="evaluator.h" />
     <ClInclude Include="interpreter.h" />
+    <ClInclude Include="integrator.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="tester.h" />
   </ItemGroup>
