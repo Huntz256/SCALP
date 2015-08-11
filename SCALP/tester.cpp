@@ -201,14 +201,12 @@ void Tester::test1(char input[]) {
 
 ////////////// TEST SUITES ////////////////
 void Tester::testIntergationI() {
-	test1("x^2");
-	test1("1/x");
-	test1("cos(x)");
-	test1("x^3 + x^6 + x^8");
-	test1("x^2 - x^4");
-	test1("x^235263 + 1/x");
-	test1("x^32 + x");
-	test1("hung, it's not nice to kill someone");
+	test1("2x^2");
+	test1("5/x");
+	test1("8cos(x)");
+	test1("5x^3 - 10x^6 + 4");
+	test1("x^99999 + 1/x + x");
+	//test1("hung, it's not nice to kill someone");
 }
 void Tester::testArithmetic(){
 	std::cout << "These should be valid:\n\n";

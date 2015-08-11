@@ -49,7 +49,7 @@ std::string Integrator::lookInTable(ASTNode* t_ast) {
 	}
 	// (d) If ast is a non-zero number value, return that number * x
 	else if ((ast->type == numberValue) && (ast->value != 0)) {
-		return std::to_string(ast->value) + "x";
+		return std::to_string((int)ast->value) + "x";
 	}
 
 	// If ast is a zero number value, return nothing
@@ -87,6 +87,7 @@ std::string Integrator::integrate(ASTNode* t_ast) {
 	else if (ast->type == operatorMinus) {
 		return integrate(ast->left) + " - " + integrate(ast->right);
 	}
+
 	// If ast represents the integral of a product of x times 1, return the integral of x
 	else if (ast->type == operatorMul && (ast->left->value == 1)) {
 		return integrate(ast->right);
@@ -94,6 +95,15 @@ std::string Integrator::integrate(ASTNode* t_ast) {
 	// If ast represents the integral of a product of 1 times x, return the integral of x
 	else if (ast->type == operatorMul && (ast->right->value == 1)) {
 		return integrate(ast->left);
+	}
+
+	// If ast represents the integral of a product of x times n, return n times the integral of x
+	else if (ast->type == operatorMul && (ast->left->value > 0)) {
+		return std::to_string((int)ast->left->value) + integrate(ast->right);
+	}
+	// If ast represents the integral of a product of n times x, return n times the integral of x
+	else if (ast->type == operatorMul && (ast->right->value > 0)) {
+		return std::to_string((int)ast->right->value) + integrate(ast->left);
 	}
 
 	solution = lookInTable(ast);
