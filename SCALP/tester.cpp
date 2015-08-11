@@ -141,8 +141,7 @@ void Tester::outputAST(ASTNode* ast, int t_level) {
 void Tester::test(char input[]) {
 	int size = interpreter.getSize(input);
 
-	std::cout << "\"" << input << "\"\n"; // Prints out the original input string
-	std::cout << "Char length: " << size << std::endl;
+	std::cout << "Input: \"" << input << "\"\n"; // Prints out the original input string
 	if (size > 42){
 		std::cout << "Input exceeds character limit of 42. Cannot compute.";
 		return;
@@ -161,7 +160,7 @@ void Tester::test(char input[]) {
 		std::cout << "Input interpreted as: " << text << "\nResult: VALID" << "\n";
 		if (OUTPUT_AST_TREE) { 
 			std::cout << "AST Tree:\n";
-			outputGraphicalAST(ast); 
+			//outputGraphicalAST(ast); 
 			std::cout << "\n";
 		}
 	}
@@ -174,8 +173,7 @@ void Tester::test(char input[]) {
 void Tester::test1(char input[]) {
 	int size = interpreter.getSize(input);
 
-	std::cout << "\"" << input << "\"\n"; // Prints out the original input string
-	std::cout << "Char length: " << size << std::endl;
+	std::cout << "Input: \"" << input << "\"\n"; // Prints out the original input string
 	if (size > 42) {
 		std::cout << "Input exceeds character limit of 42. Cannot compute.";
 		return;
@@ -192,15 +190,26 @@ void Tester::test1(char input[]) {
 
 	try {
 		ASTNode* ast = parser.parse(text);
+		//outputGraphicalAST(ast);
 		solution = integrator.integrate(ast);
-		std::cout << "integral " << text << " dx = " << solution << "\n\n";
+		std::cout << "Output: int(" << text << ")dx = " << solution << "\n\n";
 	}
 	catch (ParserException& exception1) {
-		std::cout << "integral " << text << " dx ->" << "  INVALID: " << exception1.what() << "\n\n";
+		std::cout << "Output: int(" << text << ")dx ->" << "  INVALID: " << exception1.what() << "\n\n";
 	}
 }
 
 ////////////// TEST SUITES ////////////////
+void Tester::testIntergationI() {
+	test1("x^2");
+	test1("1/x");
+	test1("cos(x)");
+	test1("x^3 + x^6 + x^8");
+	test1("x^2 - x^4");
+	test1("x^235263 + 1/x");
+	test1("x^32 + x");
+	test1("hung, it's not nice to kill someone");
+}
 void Tester::testArithmetic(){
 	std::cout << "These should be valid:\n\n";
 

@@ -41,12 +41,19 @@ ASTNode* Parser::simplify(ASTNode* t_ast)
 		simplify(ast->right);
 	}
 
-	// Use identity rules (x^1 = x, x*1 = x; x+0 = x) to simplify bottom of tree 
+	// Use identity rules (x^1 = x, x*1 = x; x+0 = x) to simplify bottom of tree where ast->left here is a number
 	if (((ast->left != NULL) && (ast->left->type == numberValue) && (ast->right != NULL) && (ast->right->type == numberValue)) && (((ast->type == operatorPower) && (ast->left->value == 1)) || ((ast->type == operatorPower) && (ast->right->value == 1)) || ((ast->type == operatorMul) && (ast->right->value == 1)) || ((ast->type == operatorPlus) && (ast->right->value == 0)))) {
 		ast->type = numberValue; ast->value = ast->left->value; ast->left = NULL; ast->right = NULL;
 	}
+
+	// Use identity rules (x^1 = x, x*1 = x; x+0 = x) to simplify bottom of tree where ast->left here is a variable
 	else if (((ast->left != NULL) && (ast->left->type == variableChar) && (ast->right != NULL) && (ast->right->type == numberValue)) && (((ast->type == operatorPower) && (ast->right->value == 1)) || ((ast->type == operatorMul) && (ast->right->value == 1)) || ((ast->type == operatorPlus) && (ast->right->value == 0)))) {
 		ast->type = variableChar; ast->var = ast->left->var; ast->left = NULL; ast->right = NULL;
+	}
+
+	// Use identity rules (x^1 = x, x*1 = x; x+0 = x) to simplify bottom of tree where ast->left here is a function
+	else if  ( (ast->left != NULL) &&  ((ast->left->type == functionSin) || (ast->left->type == functionCos) || (ast->left->type == functionTan) || (ast->left->type == functionSec) || (ast->left->type == functionCsc) || (ast->left->type == functionCot) || (ast->type == functionLog) || (ast->type == functionLn)) && (ast->right != NULL) && (ast->right->type == numberValue) && (((ast->type == operatorPower) && (ast->left->value == 1)) || ((ast->type == operatorPower) && (ast->right->value == 1)) || ((ast->type == operatorMul) && (ast->right->value == 1)) || ((ast->type == operatorPlus) && (ast->right->value == 0))) ) {
+		ast->type = ast->left->type; ast->left = ast->left->left; ast->right = NULL;
 	}
 
 	// Use identity rules (x^1 = x, x*1 = x; x+0 = x) to simplify bottom of tree 

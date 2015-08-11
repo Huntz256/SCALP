@@ -7,7 +7,8 @@ int main() {
 	// Oh and FYI, the parser exception positions correspond to the interpreted equation, not the original input
 	
 	Tester tester;
-	tester.testLogs();
+	tester.testIntergationI();
+	//tester.testLogs();
 	//tester.testArithmetic();
 	//tester.testVariables();
 	//tester.testExponents();

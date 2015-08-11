@@ -20,7 +20,10 @@ public:
 	void outputGraphicalAST(ASTNode* ast);
 	void generateGraphicalAST(std::vector<std::string>& nodes, ASTNode* ast, int t_level, bool leftNode, int t_maxIndent, int t_vecPos);
 
-	// Test suites
+	// Test suites II
+	void testIntergationI();
+
+	// Test suites I
 	void testArithmetic();
 	void testVariables();
 	void testExponents();
