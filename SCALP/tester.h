@@ -14,7 +14,7 @@
 class Tester {
 public:
 	void test(char input[]);
-	void test1(char input[]);
+	void test1(char input[], bool outputInput);
 	void outputAST(ASTNode* ast, int t_level);
 	void outputDetailedAST(ASTNode* ast, int t_level);
 	void outputGraphicalAST(ASTNode* ast);

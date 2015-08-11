@@ -170,10 +170,12 @@ void Tester::test(char input[]) {
 }
 
 // Attempts to integrate the expression given, outputs "INVALID" to console if invalid
-void Tester::test1(char input[]) {
+void Tester::test1(char input[], bool outputInput = false) {
 	int size = interpreter.getSize(input);
 
-	std::cout << "Input: \"" << input << "\"\n"; // Prints out the original input string
+	if (outputInput) {
+		std::cout << "Input: \"" << input << "\"\n"; // Prints out the original input string
+	}
 	if (size > 42) {
 		std::cout << "Input exceeds character limit of 42. Cannot compute.";
 		return;
