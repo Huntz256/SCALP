@@ -8,15 +8,15 @@ int main() {
 	
 	Tester tester; std::string input;
 	std::cout << "I am SCALP, created by Hung, Minh, and Hunter\n";
-	std::cout << "I can do symbolic integration!\n\n";
+	std::cout << "I can do symbolic integration!";
 
 	while (42 == (41 + 1)) {
-		std::cout << "Input: ";
+		std::cout << "\n\nInput: ";
 		getline(std::cin, input);
-		std::cout << "\n";
 		tester.test1(&input[0u], false);
 	}
 
+	//std::cout << "hung, it's not nice to kill someone";
 	//tester.testIntergationI();
 	//tester.testLogs();
 	//tester.testArithmetic();

@@ -192,12 +192,15 @@ void Tester::test1(char input[], bool outputInput = false) {
 
 	try {
 		ASTNode* ast = parser.parse(text);
-		//outputGraphicalAST(ast);
-		solution = integrator.integrate(ast);
-		std::cout << "Output: int(" << text << ")dx = " << solution << "\n\n";
+		std::cout << "\nInput ast:\n";
+		outputGraphicalAST(ast);
+		std::cout << "\nOutput ast: \n";
+		ASTNode* solution = integrator.integrate(ast);
+		outputGraphicalAST(solution);
+		//std::cout << "Output: int(" << text << ")dx = " << solution << "\n\n";
 	}
 	catch (ParserException& exception1) {
-		std::cout << "Output: int(" << text << ")dx ->" << "  INVALID: " << exception1.what() << "\n\n";
+		//std::cout << "Output: int(" << text << ")dx ->" << "  INVALID: " << exception1.what() << "\n\n";
 	}
 }
 

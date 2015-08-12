@@ -14,11 +14,12 @@
 
 class Integrator
 {
+	
 	ASTNode* applySafeTransform(ASTNode* t_ast);
 	ASTNode* applyHeuristicTransform(ASTNode* t_ast);
-	std::string lookInTable(ASTNode* t_ast);
+	ASTNode* lookInTable(ASTNode* t_ast);
 public:
-	std::string integrate(ASTNode* t_ast);
+	ASTNode* integrate(ASTNode* t_ast);
 };
 
 #endif //SCALP_INTEGRATOR_H_
