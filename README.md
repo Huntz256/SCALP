@@ -1,13 +1,8 @@
 # SCALP
-Title: SCALP (Symbolic CALculus Program)
+created by Hung, Hunter, and Minh
 
-Authors: HHM (Hung, Hunter, and Minh)
+SCALP (Symbolic CALculus Program) is a program written in C++ that performs symbolic integration. It uses abstract syntax trees to represent indefinite integrals. The program is a work in progress, but in its current state it can evaluate some indefinite integrals using safe transformations. For example, SCALP can evaluate the integral "5x^3 - 10x^6 + 4" with respect to x and return a symbolic result.
 
-Purpose of program: To perform symbolic integration (https://en.wikipedia.org/wiki/Symbolic_integration). And derivation.
+For more infomation on symbolic integration, see https://en.wikipedia.org/wiki/Symbolic_integration.
 
 Project start date: 7/10/2015
-
-Some things implemented so far:
-- Equation parser that uses production rules to enforce specific syntax
-- The ability to represent mathematical expressions as an abstract syntax tree
-- Evaluation of an expression represented as an abstract syntax tree
